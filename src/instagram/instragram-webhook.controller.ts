@@ -7,12 +7,12 @@ import {
   Headers,
   Post,
   Query,
-  RawBodyRequest,
   Req,
 } from '@nestjs/common';
 import { InstagramWebhookService } from './instagram-webhook.service';
 import { MetaSignatureService } from './meta-signature.service';
 import type { Request } from 'express';
+import type { RawBodyRequest } from 'body-parser';
 
 @Controller('webhooks/instagram')
 export class InstagramWebhookController {
@@ -27,7 +27,7 @@ export class InstagramWebhookController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') suppliedToken: string,
   ): string {
-    const expectedToken = process.env.INSTAGRAM_VERIFY_TOKEN;
+    const expectedToken = process.env.META_WEBHOOK_VERIFY_TOKEN;
 
     if (
       mode !== 'subscribe' ||
