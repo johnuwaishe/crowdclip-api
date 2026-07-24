@@ -27,7 +27,7 @@ export class InstagramWebhookController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') suppliedToken: string,
   ): string {
-    const expectedToken = process.env.META_WEBHOOK_VERIFY_TOKEN;
+    const expectedToken = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN;
 
     if (
       mode !== 'subscribe' ||
@@ -45,7 +45,7 @@ export class InstagramWebhookController {
     @Req() req: RawBodyRequest<Request>,
     @Headers('x-hub-signature-256') signature: string | undefined,
     @Body() payload: unknown,
-  ): Promise<string> {
+  ): Promise<{ received: true }> {
     if (!signature) {
       throw new BadRequestException('Missing signature header');
     }
@@ -61,6 +61,6 @@ export class InstagramWebhookController {
 
     await this.webhookService.recordWebhookEvent(payload);
 
-    return 'EVENT_RECEIVED';
+    return { received: true };
   }
 }
