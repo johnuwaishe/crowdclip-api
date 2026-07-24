@@ -3,6 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createHmac, timingSafeEqual } from 'crypto';
 
 interface VerifySignatureInput {
@@ -12,12 +13,10 @@ interface VerifySignatureInput {
 
 @Injectable()
 export class MetaSignatureService {
-  verifySignature({ rawBody, signature }: VerifySignatureInput): void {
-    const appSecret = process.env.INSTAGRAM_APP_SECRET;
+  constructor(private readonly configService: ConfigService) {}
 
-    if (!appSecret) {
-      throw new Error('Missing Instagram app secret');
-    }
+  verifySignature({ rawBody, signature }: VerifySignatureInput): void {
+    const appSecret = this.configService.getOrThrow('INSTAGRAM_APP_SECRET');
 
     if (!signature) {
       throw new UnauthorizedException('Missing webhook signature');

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { InstagramWebhookService } from './instagram/instagram-webhook.service';
 import { ConfigModule } from '@nestjs/config';
 import { InstagramModule } from './instagram/instagram.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { InstagramModule } from './instagram/instagram.module';
       isGlobal: true,
     }),
     InstagramModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService, InstagramWebhookService],

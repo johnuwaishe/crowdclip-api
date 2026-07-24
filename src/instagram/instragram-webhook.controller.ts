@@ -13,12 +13,14 @@ import { InstagramWebhookService } from './instagram-webhook.service';
 import { MetaSignatureService } from './meta-signature.service';
 import type { Request } from 'express';
 import type { RawBodyRequest } from 'body-parser';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('webhooks/instagram')
 export class InstagramWebhookController {
   constructor(
     private readonly webhookService: InstagramWebhookService,
     private readonly metaSignatureService: MetaSignatureService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Get()
@@ -27,7 +29,9 @@ export class InstagramWebhookController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') suppliedToken: string,
   ): string {
-    const expectedToken = process.env.INSTAGRAM_WEBHOOK_VERIFY_TOKEN;
+    const expectedToken = this.configService.getOrThrow(
+      'INSTAGRAM_WEBHOOK_VERIFY_TOKEN',
+    );
 
     if (
       mode !== 'subscribe' ||
