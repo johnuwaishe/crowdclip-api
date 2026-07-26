@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { InstagramWebhookController } from './instragram-webhook.controller';
+import { InstagramWebhookController } from './instagram-webhook.controller';
 import { MetaSignatureService } from './meta-signature.service';
 import { InstagramWebhookService } from './instagram-webhook.service';
 import { InstagramAuthController } from './instagram-auth.controller';
