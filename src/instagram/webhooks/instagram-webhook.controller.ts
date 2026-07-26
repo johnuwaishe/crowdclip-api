@@ -63,7 +63,7 @@ export class InstagramWebhookController {
       signature,
     });
 
-    await this.webhookService.recordWebhookEvent(payload);
+    await this.webhookService.handleWebhookPayload(payload);
 
     return { received: true };
   }
