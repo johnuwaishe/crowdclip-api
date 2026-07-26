@@ -10,7 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { InstagramWebhookService } from './instagram-webhook.service';
-import { MetaSignatureService } from './meta-signature.service';
+import { MetaSignatureService } from '../meta-signature.service';
 import type { Request } from 'express';
 import type { RawBodyRequest } from 'body-parser';
 import { ConfigService } from '@nestjs/config';
