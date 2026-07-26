@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: ['.env.local', '.env'],
       isGlobal: true,
     }),
     InstagramModule,
