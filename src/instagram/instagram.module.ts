@@ -4,8 +4,10 @@ import { MetaSignatureService } from './meta-signature.service';
 import { InstagramWebhookService } from './webhooks/instagram-webhook.service';
 import { InstagramAuthController } from './instagram-auth.controller';
 import { WebhookEventsRepository } from './webhooks/webhook-events.repository';
+import { ClipsModule } from '../clips/clips.module';
 
 @Module({
+  imports: [ClipsModule],
   controllers: [InstagramWebhookController, InstagramAuthController],
   providers: [
     InstagramWebhookService,
