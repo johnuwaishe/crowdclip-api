@@ -7,14 +7,22 @@ import { DatabaseService } from './../src/database/database.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
+  const query = jest.fn((sql: string) => {
+    if (sql.includes('SELECT 1 AS connected')) {
+      return Promise.resolve({ rows: [{ connected: 1 }] });
+    }
+
+    return Promise.resolve({ rows: [] });
+  });
 
   beforeEach(async () => {
+    query.mockClear();
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
       .overrideProvider(DatabaseService)
       .useValue({
-        query: jest.fn().mockResolvedValue({ rows: [{ connected: 1 }] }),
+        query,
       })
       .compile();
 
@@ -27,6 +35,16 @@ describe('AppController (e2e)', () => {
       status: 'ok',
       database: 'up',
     });
+  });
+
+  it('/clips (GET)', () => {
+    return request(app.getHttpServer()).get('/clips').expect(200).expect({
+      clips: [],
+    });
+  });
+
+  it('/clips rejects an invalid limit (GET)', () => {
+    return request(app.getHttpServer()).get('/clips?limit=101').expect(400);
   });
 
   afterEach(async () => {

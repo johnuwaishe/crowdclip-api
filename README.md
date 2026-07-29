@@ -65,6 +65,23 @@ For a hosted environment, set `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` using the hosting provider's secret manager. Never
 commit the service-role key.
 
+## Clip review API
+
+List the newest clips for artist review:
+
+```bash
+$ curl "http://localhost:3000/clips?limit=20"
+```
+
+`limit` defaults to `20` and must be between `1` and `100`. The response
+includes the fan, the current media choice, and every media asset belonging to
+the clip. Stored assets receive a signed preview URL that expires after five
+minutes by default. Temporary Instagram CDN URLs, permanent Storage paths, and
+worker errors are not exposed.
+
+This MVP endpoint assumes one connected Instagram account and does not yet have
+artist authentication. Add authentication before exposing it publicly.
+
 ## Compile and run the project
 
 ```bash
