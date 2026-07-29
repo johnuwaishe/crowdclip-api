@@ -23,7 +23,9 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+CrowdClip is a NestJS API that receives Instagram webhook events, creates fan,
+clip, and media records in PostgreSQL, and copies temporary Instagram story
+media into private Supabase Storage.
 
 ## Project setup
 
@@ -31,10 +33,45 @@
 $ pnpm install
 ```
 
+## Local development
+
+Docker Desktop must be running because the Supabase CLI uses Docker for the
+local database and Storage services.
+
+Start the local Supabase stack:
+
+```bash
+$ pnpm exec supabase start
+```
+
+Then start the API and both background workers:
+
+```bash
+$ pnpm start:local
+```
+
+`start:local` runs [`scripts/start-local.zsh`](./scripts/start-local.zsh). The
+script reads the local API URL and service-role key from
+`pnpm exec supabase status -o env`, exposes them to the Nest process as
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and then starts the development
+server. It does not print the credentials or save them to a file, and they
+disappear when the process stops.
+
+The local Supabase URL is normally `http://127.0.0.1:54321`; its port is
+configured in [`supabase/config.toml`](./supabase/config.toml). The URL is
+discovered at startup rather than copied into `.env.local`.
+
+For a hosted environment, set `SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY` using the hosting provider's secret manager. Never
+commit the service-role key.
+
 ## Compile and run the project
 
 ```bash
-# development
+# recommended local development (API plus both workers)
+$ pnpm start:local
+
+# API without automatic local Storage credentials
 $ pnpm run start
 
 # watch mode
@@ -55,6 +92,9 @@ $ pnpm run test:e2e
 
 # test coverage
 $ pnpm run test:cov
+
+# database migration tests against local Supabase
+$ pnpm run test:db
 ```
 
 ## Deployment
