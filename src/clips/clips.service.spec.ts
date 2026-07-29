@@ -1,14 +1,33 @@
-import { Logger, ServiceUnavailableException } from '@nestjs/common';
+import {
+  ConflictException,
+  Logger,
+  NotFoundException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
+import {
+  DatabaseExecutor,
+  DatabaseService,
+} from '../database/database.service';
 import { MediaDownloadConfig } from '../media/media-download.config';
 import { SupabaseObjectStorage } from '../media/supabase-object-storage.service';
 import { ClipsRepository } from './clips.repository';
 import { ClipsService } from './clips.service';
+import { MediaAssetsRepository } from './media-assets.repository';
+import { OriginalFileRequestsRepository } from './original-file-requests.repository';
+import { OriginalFileUploadTokenService } from './original-file-upload-token.service';
 import { ClipReviewRow } from './types/clip-review-row.type';
+import { ClipRow } from './types/clip-row.type';
+import { MediaAssetRow } from './types/media-asset-row.type';
+import { OriginalFileRequestRow } from './types/original-file-request-row.type';
 
 describe('ClipsService', () => {
   const listRecentForReview = jest.fn();
+  const findByIdForUpdate = jest.fn();
+  const updateMediaChoice = jest.fn();
   const clipsRepository = {
     listRecentForReview,
+    findByIdForUpdate,
+    updateMediaChoice,
   } as unknown as ClipsRepository;
   const createSignedUrl = jest.fn();
   const storage = {
@@ -17,10 +36,76 @@ describe('ClipsService', () => {
   const mediaConfig = {
     previewUrlTtlSeconds: 300,
   } as MediaDownloadConfig;
+  const transaction = {
+    query: jest.fn(),
+  } as unknown as DatabaseExecutor;
+  const withTransaction = jest.fn(
+    (callback: (executor: DatabaseExecutor) => Promise<unknown>) =>
+      callback(transaction),
+  );
+  const databaseService = {
+    withTransaction,
+  } as unknown as DatabaseService;
+  const findStoredByClipAndType = jest.fn();
+  const mediaAssetsRepository = {
+    findStoredByClipAndType,
+  } as unknown as MediaAssetsRepository;
+  const createOriginalFileRequest = jest.fn();
+  const findOriginalFileRequestByClipId = jest.fn();
+  const originalFileRequestsRepository = {
+    create: createOriginalFileRequest,
+    findByClipId: findOriginalFileRequestByClipId,
+  } as unknown as OriginalFileRequestsRepository;
+  const generateUploadToken = jest.fn();
+  const uploadTokenService = {
+    generate: generateUploadToken,
+  } as unknown as OriginalFileUploadTokenService;
 
   const clipCreatedAt = new Date('2026-07-29T17:00:00.000Z');
   const assetCreatedAt = new Date('2026-07-29T17:00:01.000Z');
   const storedAt = new Date('2026-07-29T17:00:02.000Z');
+  const clip: ClipRow = {
+    id: 'clip-id',
+    fan_id: 'fan-id',
+    source_webhook_event_id: 'event-id',
+    media_choice: 'undecided',
+    mentioned_at: clipCreatedAt,
+    created_at: clipCreatedAt,
+    updated_at: clipCreatedAt,
+  };
+  const storedAsset: MediaAssetRow = {
+    id: 'asset-id',
+    clip_id: clip.id,
+    asset_type: 'instagram_story',
+    status: 'stored',
+    source_url: null,
+    storage_bucket: 'clip-media',
+    storage_path: 'clip-id/instagram/asset-id.mp4',
+    mime_type: 'video/mp4',
+    byte_size: '4738057',
+    attempt_count: 1,
+    last_error: null,
+    download_started_at: storedAt,
+    next_attempt_at: null,
+    stored_at: storedAt,
+    created_at: assetCreatedAt,
+    updated_at: storedAt,
+  };
+  const originalFileRequest: OriginalFileRequestRow = {
+    id: 'request-id',
+    clip_id: clip.id,
+    status: 'pending',
+    upload_token_hash: 'a'.repeat(64),
+    expires_at: new Date('2026-08-05T17:00:00.000Z'),
+    instagram_message_id: null,
+    attempt_count: 0,
+    last_error: null,
+    sending_started_at: null,
+    sent_at: null,
+    fulfilled_at: null,
+    created_at: clipCreatedAt,
+    updated_at: clipCreatedAt,
+  };
   const baseRow: ClipReviewRow = {
     clip_id: 'clip-id',
     media_choice: 'undecided',
@@ -43,11 +128,23 @@ describe('ClipsService', () => {
     jest.clearAllMocks();
     jest.spyOn(Date, 'now').mockReturnValue(1_753_806_000_000);
     jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+    jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
+
+  const createService = () =>
+    new ClipsService(
+      clipsRepository,
+      storage,
+      mediaConfig,
+      databaseService,
+      mediaAssetsRepository,
+      originalFileRequestsRepository,
+      uploadTokenService,
+    );
 
   it('groups rows into clips and signs stored assets only', async () => {
     const pendingRow: ClipReviewRow = {
@@ -64,7 +161,7 @@ describe('ClipsService', () => {
     createSignedUrl.mockResolvedValueOnce(
       'https://storage.test/signed-preview',
     );
-    const service = new ClipsService(clipsRepository, storage, mediaConfig);
+    const service = createService();
 
     await expect(service.listRecentForReview(20)).resolves.toEqual([
       {
@@ -127,7 +224,7 @@ describe('ClipsService', () => {
         asset_created_at: null,
       },
     ]);
-    const service = new ClipsService(clipsRepository, storage, mediaConfig);
+    const service = createService();
 
     const clips = await service.listRecentForReview(20);
 
@@ -138,10 +235,132 @@ describe('ClipsService', () => {
   it('returns a service unavailable error when preview signing fails', async () => {
     listRecentForReview.mockResolvedValueOnce([baseRow]);
     createSignedUrl.mockRejectedValueOnce(new Error('Storage unavailable'));
-    const service = new ClipsService(clipsRepository, storage, mediaConfig);
+    const service = createService();
 
     await expect(service.listRecentForReview(20)).rejects.toBeInstanceOf(
       ServiceUnavailableException,
     );
+  });
+
+  it('chooses a stored Instagram story in one transaction', async () => {
+    const updatedClip: ClipRow = {
+      ...clip,
+      media_choice: 'use_instagram_story',
+    };
+    findByIdForUpdate.mockResolvedValueOnce(clip);
+    findStoredByClipAndType.mockResolvedValueOnce(storedAsset);
+    updateMediaChoice.mockResolvedValueOnce(updatedClip);
+    const service = createService();
+
+    await expect(
+      service.decideMediaChoice(clip.id, 'use_instagram_story'),
+    ).resolves.toEqual({
+      clipId: clip.id,
+      mediaChoice: 'use_instagram_story',
+      updatedAt: clip.updated_at,
+      originalFileRequest: null,
+    });
+
+    expect(findByIdForUpdate).toHaveBeenCalledWith(clip.id, transaction);
+    expect(findStoredByClipAndType).toHaveBeenCalledWith(
+      clip.id,
+      'instagram_story',
+      transaction,
+    );
+    expect(updateMediaChoice).toHaveBeenCalledWith(
+      clip.id,
+      'use_instagram_story',
+      transaction,
+    );
+    expect(withTransaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('creates an original-file request and discloses its upload path once', async () => {
+    const updatedClip: ClipRow = {
+      ...clip,
+      media_choice: 'request_fan_original',
+    };
+    findByIdForUpdate.mockResolvedValueOnce(clip);
+    updateMediaChoice.mockResolvedValueOnce(updatedClip);
+    generateUploadToken.mockReturnValueOnce({
+      rawToken: 'raw-upload-token',
+      tokenHash: 'a'.repeat(64),
+    });
+    createOriginalFileRequest.mockResolvedValueOnce(originalFileRequest);
+    const service = createService();
+
+    await expect(
+      service.decideMediaChoice(clip.id, 'request_fan_original'),
+    ).resolves.toEqual({
+      clipId: clip.id,
+      mediaChoice: 'request_fan_original',
+      updatedAt: clip.updated_at,
+      originalFileRequest: {
+        id: originalFileRequest.id,
+        status: 'pending',
+        expiresAt: originalFileRequest.expires_at,
+        uploadPath: '/uploads/original/raw-upload-token',
+      },
+    });
+
+    expect(createOriginalFileRequest).toHaveBeenCalledWith(
+      {
+        clipId: clip.id,
+        uploadTokenHash: 'a'.repeat(64),
+        ttlSeconds: 604800,
+      },
+      transaction,
+    );
+  });
+
+  it('returns an existing same decision without issuing another token', async () => {
+    const decidedClip: ClipRow = {
+      ...clip,
+      media_choice: 'request_fan_original',
+    };
+    findByIdForUpdate.mockResolvedValueOnce(decidedClip);
+    findOriginalFileRequestByClipId.mockResolvedValueOnce(originalFileRequest);
+    const service = createService();
+
+    const result = await service.decideMediaChoice(
+      clip.id,
+      'request_fan_original',
+    );
+
+    expect(result.originalFileRequest?.uploadPath).toBeNull();
+    expect(generateUploadToken).not.toHaveBeenCalled();
+    expect(updateMediaChoice).not.toHaveBeenCalled();
+  });
+
+  it('rejects changing an existing decision', async () => {
+    findByIdForUpdate.mockResolvedValueOnce({
+      ...clip,
+      media_choice: 'use_instagram_story',
+    });
+    const service = createService();
+
+    await expect(
+      service.decideMediaChoice(clip.id, 'request_fan_original'),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('rejects choosing an Instagram story that is not stored', async () => {
+    findByIdForUpdate.mockResolvedValueOnce(clip);
+    findStoredByClipAndType.mockResolvedValueOnce(null);
+    const service = createService();
+
+    await expect(
+      service.decideMediaChoice(clip.id, 'use_instagram_story'),
+    ).rejects.toBeInstanceOf(ConflictException);
+    expect(updateMediaChoice).not.toHaveBeenCalled();
+  });
+
+  it('returns not found for an unknown clip', async () => {
+    findByIdForUpdate.mockResolvedValueOnce(null);
+    const service = createService();
+
+    await expect(
+      service.decideMediaChoice(clip.id, 'use_instagram_story'),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 });

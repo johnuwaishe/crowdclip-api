@@ -5,6 +5,8 @@ import { ClipsController } from './clips.controller';
 import { ClipsRepository } from './clips.repository';
 import { ClipsService } from './clips.service';
 import { MediaAssetsRepository } from './media-assets.repository';
+import { OriginalFileRequestsRepository } from './original-file-requests.repository';
+import { OriginalFileUploadTokenService } from './original-file-upload-token.service';
 
 @Module({
   imports: [MediaStorageModule],
@@ -14,6 +16,8 @@ import { MediaAssetsRepository } from './media-assets.repository';
     ClipsRepository,
     ClipsService,
     MediaAssetsRepository,
+    OriginalFileRequestsRepository,
+    OriginalFileUploadTokenService,
   ],
   exports: [FansRepository, ClipsRepository, MediaAssetsRepository],
 })

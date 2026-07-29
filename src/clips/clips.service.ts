@@ -1,13 +1,29 @@
 import {
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   Logger,
+  NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import {
+  DatabaseExecutor,
+  DatabaseService,
+} from '../database/database.service';
 import { MediaDownloadConfig } from '../media/media-download.config';
 import { SupabaseObjectStorage } from '../media/supabase-object-storage.service';
 import { ClipsRepository } from './clips.repository';
+import { MediaAssetsRepository } from './media-assets.repository';
+import { OriginalFileRequestsRepository } from './original-file-requests.repository';
+import { OriginalFileUploadTokenService } from './original-file-upload-token.service';
+import {
+  ArtistClipMediaChoice,
+  ClipDecisionResult,
+} from './types/clip-decision.type';
 import { ClipReviewRow } from './types/clip-review-row.type';
+import { ClipRow } from './types/clip-row.type';
 import { ClipReview, ClipReviewMediaAsset } from './types/clip-review.type';
+import { OriginalFileRequestRow } from './types/original-file-request-row.type';
 
 interface PreviewTarget {
   bucket: string;
@@ -15,6 +31,8 @@ interface PreviewTarget {
 }
 
 const PREVIEW_SIGNING_CONCURRENCY = 10;
+const ORIGINAL_FILE_REQUEST_TTL_SECONDS = 7 * 24 * 60 * 60;
+const ORIGINAL_FILE_UPLOAD_PATH = '/uploads/original';
 
 @Injectable()
 export class ClipsService {
@@ -24,7 +42,45 @@ export class ClipsService {
     private readonly clipsRepository: ClipsRepository,
     private readonly storage: SupabaseObjectStorage,
     private readonly mediaConfig: MediaDownloadConfig,
+    private readonly databaseService: DatabaseService,
+    private readonly mediaAssetsRepository: MediaAssetsRepository,
+    private readonly originalFileRequestsRepository: OriginalFileRequestsRepository,
+    private readonly uploadTokenService: OriginalFileUploadTokenService,
   ) {}
+
+  async decideMediaChoice(
+    clipId: string,
+    mediaChoice: ArtistClipMediaChoice,
+  ): Promise<ClipDecisionResult> {
+    const result = await this.databaseService.withTransaction(
+      async (transaction) => {
+        const clip = await this.clipsRepository.findByIdForUpdate(
+          clipId,
+          transaction,
+        );
+
+        if (!clip) {
+          throw new NotFoundException('Clip not found');
+        }
+
+        if (clip.media_choice !== 'undecided') {
+          return this.handleExistingDecision(clip, mediaChoice, transaction);
+        }
+
+        if (mediaChoice === 'use_instagram_story') {
+          return this.chooseInstagramStory(clip, transaction);
+        }
+
+        return this.requestFanOriginal(clip, transaction);
+      },
+    );
+
+    this.logger.log(
+      `Clip media choice resolved: clipId=${result.clipId} mediaChoice=${result.mediaChoice}`,
+    );
+
+    return result;
+  }
 
   async listRecentForReview(limit: number): Promise<ClipReview[]> {
     const rows = await this.clipsRepository.listRecentForReview(limit);
@@ -74,6 +130,112 @@ export class ClipsService {
     }
 
     return clips;
+  }
+
+  private async handleExistingDecision(
+    clip: ClipRow,
+    requestedChoice: ArtistClipMediaChoice,
+    transaction: DatabaseExecutor,
+  ): Promise<ClipDecisionResult> {
+    if (clip.media_choice !== requestedChoice) {
+      throw new ConflictException(
+        `Clip has already been set to ${clip.media_choice}`,
+      );
+    }
+
+    if (requestedChoice === 'use_instagram_story') {
+      return this.createDecisionResult(clip, null, null);
+    }
+
+    const request = await this.originalFileRequestsRepository.findByClipId(
+      clip.id,
+      transaction,
+    );
+
+    if (!request) {
+      throw new InternalServerErrorException(
+        'Clip decision is missing its original file request',
+      );
+    }
+
+    return this.createDecisionResult(clip, request, null);
+  }
+
+  private async chooseInstagramStory(
+    clip: ClipRow,
+    transaction: DatabaseExecutor,
+  ): Promise<ClipDecisionResult> {
+    const storedAsset =
+      await this.mediaAssetsRepository.findStoredByClipAndType(
+        clip.id,
+        'instagram_story',
+        transaction,
+      );
+
+    if (!storedAsset) {
+      throw new ConflictException(
+        'A stored Instagram story is required before choosing it',
+      );
+    }
+
+    const updatedClip = await this.clipsRepository.updateMediaChoice(
+      clip.id,
+      'use_instagram_story',
+      transaction,
+    );
+
+    return this.createDecisionResult(updatedClip, null, null);
+  }
+
+  private async requestFanOriginal(
+    clip: ClipRow,
+    transaction: DatabaseExecutor,
+  ): Promise<ClipDecisionResult> {
+    const token = this.uploadTokenService.generate();
+    const updatedClip = await this.clipsRepository.updateMediaChoice(
+      clip.id,
+      'request_fan_original',
+      transaction,
+    );
+    const request = await this.originalFileRequestsRepository.create(
+      {
+        clipId: clip.id,
+        uploadTokenHash: token.tokenHash,
+        ttlSeconds: ORIGINAL_FILE_REQUEST_TTL_SECONDS,
+      },
+      transaction,
+    );
+    const uploadPath = `${ORIGINAL_FILE_UPLOAD_PATH}/${encodeURIComponent(
+      token.rawToken,
+    )}`;
+
+    return this.createDecisionResult(updatedClip, request, uploadPath);
+  }
+
+  private createDecisionResult(
+    clip: ClipRow,
+    request: OriginalFileRequestRow | null,
+    uploadPath: string | null,
+  ): ClipDecisionResult {
+    if (clip.media_choice === 'undecided') {
+      throw new Error(
+        'Cannot create a decision response for an undecided clip',
+      );
+    }
+
+    return {
+      clipId: clip.id,
+      mediaChoice: clip.media_choice,
+      updatedAt: clip.updated_at,
+      originalFileRequest: request
+        ? {
+            id: request.id,
+            status: request.status,
+            expiresAt: request.expires_at,
+            uploadPath,
+          }
+        : null,
+    };
   }
 
   private async signPreviews(

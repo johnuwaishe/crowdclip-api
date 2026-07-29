@@ -4,8 +4,10 @@ import { ClipsService } from './clips.service';
 
 describe('ClipsController', () => {
   const listRecentForReview = jest.fn();
+  const decideMediaChoice = jest.fn();
   const clipsService = {
     listRecentForReview,
+    decideMediaChoice,
   } as unknown as ClipsService;
 
   beforeEach(() => {
@@ -40,4 +42,38 @@ describe('ClipsController', () => {
       expect(listRecentForReview).not.toHaveBeenCalled();
     },
   );
+
+  it.each(['use_instagram_story', 'request_fan_original'] as const)(
+    'passes the %s decision to the service',
+    async (mediaChoice) => {
+      const decision = {
+        clipId: 'clip-id',
+        mediaChoice,
+        updatedAt: new Date('2026-07-30T00:00:00.000Z'),
+        originalFileRequest: null,
+      };
+      decideMediaChoice.mockResolvedValueOnce(decision);
+      const controller = new ClipsController(clipsService);
+
+      await expect(
+        controller.decideMediaChoice('clip-id', { mediaChoice }),
+      ).resolves.toBe(decision);
+      expect(decideMediaChoice).toHaveBeenCalledWith('clip-id', mediaChoice);
+    },
+  );
+
+  it.each([
+    undefined,
+    null,
+    {},
+    { mediaChoice: 'undecided' },
+    { mediaChoice: 'invalid' },
+  ])('rejects an invalid media choice body', async (body) => {
+    const controller = new ClipsController(clipsService);
+
+    await expect(
+      controller.decideMediaChoice('clip-id', body),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(decideMediaChoice).not.toHaveBeenCalled();
+  });
 });

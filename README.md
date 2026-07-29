@@ -82,6 +82,25 @@ worker errors are not exposed.
 This MVP endpoint assumes one connected Instagram account and does not yet have
 artist authentication. Add authentication before exposing it publicly.
 
+Record the artist's decision after reviewing a clip:
+
+```bash
+$ curl --request PATCH \
+  --header "Content-Type: application/json" \
+  --data '{"mediaChoice":"use_instagram_story"}' \
+  "http://localhost:3000/clips/<clip-id>/media-choice"
+```
+
+Use `request_fan_original` instead to create an original-file request. That
+response contains a one-time `uploadPath` for the upcoming fan upload flow. The
+raw token appears only in the first response; CrowdClip persists only its
+SHA-256 hash. Repeating the same decision is safe but does not issue the path
+again. Attempting to change an existing decision returns `409`.
+
+Choosing `use_instagram_story` requires the Instagram asset to have reached
+`stored`. Automatic Instagram messaging and the fan upload endpoint are the
+next phases; the returned upload path does not accept uploads yet.
+
 ## Compile and run the project
 
 ```bash
