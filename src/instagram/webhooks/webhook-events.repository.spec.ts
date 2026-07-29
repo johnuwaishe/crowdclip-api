@@ -97,6 +97,42 @@ describe('WebhookEventsRepository', () => {
     ).resolves.toBeNull();
   });
 
+  it('requeues stale events and abandons events at the attempt limit', async () => {
+    const staleBefore = new Date('2026-07-29T16:55:00.000Z');
+    const recoveredEvents: WebhookEventRow[] = [
+      {
+        ...event,
+        status: 'pending',
+        processing_started_at: null,
+      },
+      {
+        ...event,
+        id: 'abandoned-event-id',
+        status: 'failed',
+        processing_started_at: null,
+      },
+    ];
+    query.mockResolvedValueOnce(queryResult(recoveredEvents));
+
+    await expect(
+      repository.recoverStaleProcessingByType('story_mention', staleBefore, 3),
+    ).resolves.toBe(recoveredEvents);
+
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('WHEN attempt_count >= $3'),
+      [
+        'story_mention',
+        staleBefore,
+        3,
+        'Processing lease expired before completion',
+      ],
+    );
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('AND processing_started_at < $2'),
+      expect.any(Array),
+    );
+  });
+
   it.each([
     ['markProcessed', 'processed', ['event-id']],
     ['markFailed', 'failed', ['event-id', 'Processing failed']],

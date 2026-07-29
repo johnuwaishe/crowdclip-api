@@ -6,6 +6,7 @@ import { InstagramAuthController } from './instagram-auth.controller';
 import { WebhookEventsRepository } from './webhooks/webhook-events.repository';
 import { ClipsModule } from '../clips/clips.module';
 import { StoryMentionProcessor } from './webhooks/story-mention.processor';
+import { StoryMentionWorker } from './webhooks/story-mention.worker';
 
 @Module({
   imports: [ClipsModule],
@@ -13,6 +14,7 @@ import { StoryMentionProcessor } from './webhooks/story-mention.processor';
   providers: [
     InstagramWebhookService,
     StoryMentionProcessor,
+    StoryMentionWorker,
     MetaSignatureService,
     WebhookEventsRepository,
   ],

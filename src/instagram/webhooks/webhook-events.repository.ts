@@ -79,6 +79,36 @@ export class WebhookEventsRepository {
     return result.rows[0] ?? null;
   }
 
+  async recoverStaleProcessingByType(
+    eventType: string,
+    staleBefore: Date,
+    maxAttempts: number,
+  ): Promise<WebhookEventRow[]> {
+    const result = await this.databaseService.query<WebhookEventRow>(
+      `
+        UPDATE public.webhook_events
+        SET status = CASE
+              WHEN attempt_count >= $3 THEN 'failed'
+              ELSE 'pending'
+            END,
+            last_error = $4,
+            processing_started_at = NULL
+        WHERE status = 'processing'
+          AND event_type = $1
+          AND processing_started_at < $2
+        RETURNING *
+      `,
+      [
+        eventType,
+        staleBefore,
+        maxAttempts,
+        'Processing lease expired before completion',
+      ],
+    );
+
+    return result.rows;
+  }
+
   async markProcessed(
     id: string,
     executor: DatabaseExecutor = this.databaseService,
