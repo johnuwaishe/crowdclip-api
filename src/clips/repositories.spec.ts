@@ -153,6 +153,7 @@ describe('clip workflow repositories', () => {
       attempt_count: 0,
       last_error: null,
       download_started_at: null,
+      next_attempt_at: null,
       stored_at: null,
       created_at: now,
       updated_at: now,
@@ -200,6 +201,101 @@ describe('clip workflow repositories', () => {
         2,
         expect.stringContaining('AND asset_type = $2'),
         ['clip-id', 'instagram_story'],
+      );
+    });
+
+    it('atomically claims a pending Instagram story asset', async () => {
+      const downloadingAsset: MediaAssetRow = {
+        ...asset,
+        status: 'downloading',
+        attempt_count: 1,
+        download_started_at: now,
+      };
+      query.mockResolvedValueOnce(queryResult([downloadingAsset]));
+      const repository = new MediaAssetsRepository(databaseService);
+
+      await expect(repository.claimNextPendingInstagramStory()).resolves.toBe(
+        downloadingAsset,
+      );
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('FOR UPDATE SKIP LOCKED'),
+      );
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("asset_type = 'instagram_story'"),
+      );
+    });
+
+    it('records the permanent storage location', async () => {
+      const storedAsset: MediaAssetRow = {
+        ...asset,
+        status: 'stored',
+        storage_bucket: 'clip-media',
+        storage_path: 'clip-id/instagram/asset-id.mp4',
+        mime_type: 'video/mp4',
+        byte_size: '1024',
+        stored_at: now,
+      };
+      query.mockResolvedValueOnce(queryResult([storedAsset]));
+      const repository = new MediaAssetsRepository(databaseService);
+
+      await expect(
+        repository.markStored({
+          id: asset.id,
+          storageBucket: 'clip-media',
+          storagePath: 'clip-id/instagram/asset-id.mp4',
+          mimeType: 'video/mp4',
+          byteSize: 1024,
+        }),
+      ).resolves.toBe(storedAsset);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("AND status = 'downloading'"),
+        [
+          asset.id,
+          'clip-media',
+          'clip-id/instagram/asset-id.mp4',
+          'video/mp4',
+          1024,
+        ],
+      );
+    });
+
+    it('schedules retryable failures and recovers stale downloads', async () => {
+      const nextAttemptAt = new Date('2026-07-29T17:01:00.000Z');
+      const pendingAsset: MediaAssetRow = {
+        ...asset,
+        attempt_count: 1,
+        last_error: 'Download failed',
+        next_attempt_at: nextAttemptAt,
+      };
+      query
+        .mockResolvedValueOnce(queryResult([pendingAsset]))
+        .mockResolvedValueOnce(queryResult([pendingAsset]));
+      const repository = new MediaAssetsRepository(databaseService);
+
+      await expect(
+        repository.releaseAfterFailure(
+          asset.id,
+          'Download failed',
+          3,
+          nextAttemptAt,
+        ),
+      ).resolves.toBe(pendingAsset);
+
+      await expect(repository.recoverStaleDownloads(now, 3)).resolves.toEqual([
+        pendingAsset,
+      ]);
+
+      expect(query).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('WHEN attempt_count >= $3'),
+        [asset.id, 'Download failed', 3, nextAttemptAt],
+      );
+      expect(query).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('AND download_started_at < $1'),
+        [now, 3, 'Download lease expired before completion'],
       );
     });
   });

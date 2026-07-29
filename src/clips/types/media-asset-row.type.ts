@@ -15,6 +15,7 @@ export interface MediaAssetRow {
   attempt_count: number;
   last_error: string | null;
   download_started_at: Date | null;
+  next_attempt_at: Date | null;
   stored_at: Date | null;
   created_at: Date;
   updated_at: Date;

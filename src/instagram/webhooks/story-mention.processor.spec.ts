@@ -107,6 +107,7 @@ describe('StoryMentionProcessor', () => {
     attempt_count: 0,
     last_error: null,
     download_started_at: null,
+    next_attempt_at: null,
     stored_at: null,
     created_at: now,
     updated_at: now,

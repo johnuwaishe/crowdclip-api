@@ -11,6 +11,14 @@ export interface FindOrCreateMediaAssetInput {
   sourceUrl: string | null;
 }
 
+export interface StoreMediaAssetInput {
+  id: string;
+  storageBucket: string;
+  storagePath: string;
+  mimeType: string;
+  byteSize: number;
+}
+
 @Injectable()
 export class MediaAssetsRepository {
   constructor(private readonly databaseService: DatabaseService) {}
@@ -57,5 +65,120 @@ export class MediaAssetsRepository {
     }
 
     return existingAsset;
+  }
+
+  async claimNextPendingInstagramStory(): Promise<MediaAssetRow | null> {
+    const result = await this.databaseService.query<MediaAssetRow>(
+      `
+        WITH next_asset AS (
+          SELECT id
+          FROM public.media_assets
+          WHERE status = 'pending'
+            AND asset_type = 'instagram_story'
+            AND (
+              next_attempt_at IS NULL
+              OR next_attempt_at <= NOW()
+            )
+          ORDER BY created_at
+          FOR UPDATE SKIP LOCKED
+          LIMIT 1
+        )
+        UPDATE public.media_assets AS media_asset
+        SET status = 'downloading',
+            attempt_count = media_asset.attempt_count + 1,
+            last_error = NULL,
+            download_started_at = NOW(),
+            next_attempt_at = NULL
+        FROM next_asset
+        WHERE media_asset.id = next_asset.id
+        RETURNING media_asset.*
+      `,
+    );
+
+    return result.rows[0] ?? null;
+  }
+
+  async markStored(input: StoreMediaAssetInput): Promise<MediaAssetRow | null> {
+    const result = await this.databaseService.query<MediaAssetRow>(
+      `
+        UPDATE public.media_assets
+        SET status = 'stored',
+            storage_bucket = $2,
+            storage_path = $3,
+            mime_type = $4,
+            byte_size = $5,
+            last_error = NULL,
+            stored_at = NOW(),
+            next_attempt_at = NULL
+        WHERE id = $1
+          AND status = 'downloading'
+        RETURNING *
+      `,
+      [
+        input.id,
+        input.storageBucket,
+        input.storagePath,
+        input.mimeType,
+        input.byteSize,
+      ],
+    );
+
+    return result.rows[0] ?? null;
+  }
+
+  async releaseAfterFailure(
+    id: string,
+    errorMessage: string,
+    maxAttempts: number,
+    nextAttemptAt: Date,
+  ): Promise<MediaAssetRow | null> {
+    const result = await this.databaseService.query<MediaAssetRow>(
+      `
+        UPDATE public.media_assets
+        SET status = CASE
+              WHEN attempt_count >= $3 THEN 'failed'
+              ELSE 'pending'
+            END,
+            last_error = $2,
+            download_started_at = NULL,
+            next_attempt_at = CASE
+              WHEN attempt_count >= $3 THEN NULL
+              ELSE $4
+            END
+        WHERE id = $1
+          AND status = 'downloading'
+        RETURNING *
+      `,
+      [id, errorMessage, maxAttempts, nextAttemptAt],
+    );
+
+    return result.rows[0] ?? null;
+  }
+
+  async recoverStaleDownloads(
+    staleBefore: Date,
+    maxAttempts: number,
+  ): Promise<MediaAssetRow[]> {
+    const result = await this.databaseService.query<MediaAssetRow>(
+      `
+        UPDATE public.media_assets
+        SET status = CASE
+              WHEN attempt_count >= $2 THEN 'failed'
+              ELSE 'pending'
+            END,
+            last_error = $3,
+            download_started_at = NULL,
+            next_attempt_at = CASE
+              WHEN attempt_count >= $2 THEN NULL
+              ELSE NOW()
+            END
+        WHERE status = 'downloading'
+          AND download_started_at < $1
+        RETURNING *
+      `,
+      [staleBefore, maxAttempts, 'Download lease expired before completion'],
+    );
+
+    return result.rows;
   }
 }

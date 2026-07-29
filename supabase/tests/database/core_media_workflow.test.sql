@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 
 SET LOCAL search_path = public, extensions;
 
-SELECT plan(27);
+SELECT plan(28);
 
 SELECT has_table('public', 'fans', 'fans table exists');
 SELECT has_table('public', 'clips', 'clips table exists');
@@ -409,17 +409,29 @@ SELECT ok(
 
 SELECT ok(
     (
-        SELECT COUNT(*) = 4
+        SELECT COUNT(*) = 5
         FROM pg_indexes
         WHERE schemaname = 'public'
           AND indexname IN (
               'webhook_events_status_idx',
               'webhook_events_processing_started_at_idx',
-              'media_assets_status_created_at_idx',
+              'media_assets_pending_next_attempt_idx',
+              'media_assets_download_started_at_idx',
               'original_file_requests_status_expires_at_idx'
           )
     ),
     'worker and monitoring indexes exist'
+);
+
+SELECT ok(
+    (
+        SELECT NOT public
+            AND file_size_limit = 52428800
+            AND allowed_mime_types @> ARRAY['image/*', 'video/*']
+        FROM storage.buckets
+        WHERE id = 'clip-media'
+    ),
+    'clip media bucket is private and restricted'
 );
 
 SELECT * FROM finish();
