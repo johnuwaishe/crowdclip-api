@@ -4,6 +4,7 @@ import { SupabaseObjectStorage } from './supabase-object-storage.service';
 describe('SupabaseObjectStorage', () => {
   const config = {
     uploadTimeoutMs: 1_000,
+    signedUrlTimeoutMs: 1_000,
     getSupabaseUrl: jest.fn().mockReturnValue('http://127.0.0.1:54321'),
     getServiceRoleKey: jest.fn().mockReturnValue('test-service-role-key'),
   } as unknown as MediaDownloadConfig;
@@ -62,5 +63,53 @@ describe('SupabaseObjectStorage', () => {
     ).rejects.toThrow(
       'Supabase Storage upload returned HTTP 404: Bucket not found',
     );
+  });
+
+  it('creates an absolute, expiring URL for a private object', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          signedURL:
+            '/object/sign/clip-media/clip-id/instagram/asset-id.mp4?token=signed-token',
+        }),
+        { status: 200 },
+      ),
+    );
+    const storage = new SupabaseObjectStorage(config);
+
+    await expect(
+      storage.createSignedUrl({
+        bucket: 'clip-media',
+        path: 'clip-id/instagram/asset-id.mp4',
+        expiresInSeconds: 300,
+      }),
+    ).resolves.toBe(
+      'http://127.0.0.1:54321/storage/v1/object/sign/clip-media/clip-id/instagram/asset-id.mp4?token=signed-token',
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      new URL(
+        'http://127.0.0.1:54321/storage/v1/object/sign/clip-media/clip-id/instagram/asset-id.mp4',
+      ),
+      expect.objectContaining({
+        method: 'POST',
+        body: JSON.stringify({ expiresIn: 300 }),
+      }),
+    );
+  });
+
+  it('rejects a malformed signing response', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ unexpected: true }), { status: 200 }),
+    );
+    const storage = new SupabaseObjectStorage(config);
+
+    await expect(
+      storage.createSignedUrl({
+        bucket: 'clip-media',
+        path: 'clip-id/instagram/asset-id.mp4',
+        expiresInSeconds: 300,
+      }),
+    ).rejects.toThrow('Supabase Storage returned an invalid signed URL');
   });
 });

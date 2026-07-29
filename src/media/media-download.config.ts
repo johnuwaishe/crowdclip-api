@@ -14,6 +14,8 @@ export class MediaDownloadConfig {
   readonly maxBytes: number;
   readonly downloadTimeoutMs: number;
   readonly uploadTimeoutMs: number;
+  readonly signedUrlTimeoutMs: number;
+  readonly previewUrlTtlSeconds: number;
   readonly storageBucket: string;
 
   private readonly supabaseUrl: string | undefined;
@@ -81,6 +83,18 @@ export class MediaDownloadConfig {
       30_000,
       1_000,
       5 * 60 * 1_000,
+    );
+    this.signedUrlTimeoutMs = this.readBoundedInteger(
+      'MEDIA_SIGNED_URL_TIMEOUT_MS',
+      5_000,
+      1_000,
+      30_000,
+    );
+    this.previewUrlTtlSeconds = this.readBoundedInteger(
+      'MEDIA_PREVIEW_URL_TTL_SECONDS',
+      5 * 60,
+      60,
+      60 * 60,
     );
     this.storageBucket =
       this.configService.get<string>('MEDIA_STORAGE_BUCKET') ?? 'clip-media';

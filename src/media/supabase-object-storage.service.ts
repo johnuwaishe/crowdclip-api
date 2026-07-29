@@ -8,6 +8,12 @@ export interface UploadObjectInput {
   contentType: string;
 }
 
+export interface CreateSignedUrlInput {
+  bucket: string;
+  path: string;
+  expiresInSeconds: number;
+}
+
 @Injectable()
 export class SupabaseObjectStorage {
   constructor(private readonly config: MediaDownloadConfig) {}
@@ -57,7 +63,64 @@ export class SupabaseObjectStorage {
     }
   }
 
+  async createSignedUrl(input: CreateSignedUrlInput): Promise<string> {
+    const controller = new AbortController();
+    const timeout = setTimeout(
+      () => controller.abort(),
+      this.config.signedUrlTimeoutMs,
+    );
+    timeout.unref();
+
+    const serviceRoleKey = this.config.getServiceRoleKey();
+    const signUrl = this.createStorageUrl(
+      'object/sign',
+      input.bucket,
+      input.path,
+    );
+
+    try {
+      const response = await fetch(signUrl, {
+        method: 'POST',
+        signal: controller.signal,
+        headers: {
+          apikey: serviceRoleKey,
+          Authorization: `Bearer ${serviceRoleKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ expiresIn: input.expiresInSeconds }),
+      });
+
+      if (!response.ok) {
+        const details = (await response.text()).slice(0, 500);
+        throw new Error(
+          `Supabase Storage signing returned HTTP ${response.status}: ${details}`,
+        );
+      }
+
+      const payload: unknown = await response.json();
+      const signedPath = this.readSignedPath(payload);
+
+      return this.createAbsoluteSignedUrl(signedPath);
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw new Error('Supabase Storage signing timed out', { cause: error });
+      }
+
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
   private createObjectUrl(bucket: string, path: string): URL {
+    return this.createStorageUrl('object', bucket, path);
+  }
+
+  private createStorageUrl(
+    operationPath: string,
+    bucket: string,
+    path: string,
+  ): URL {
     if (!/^[a-z0-9][a-z0-9-]{1,62}$/.test(bucket)) {
       throw new Error('Storage bucket name is invalid');
     }
@@ -77,7 +140,27 @@ export class SupabaseObjectStorage {
     const baseUrl = this.config.getSupabaseUrl().replace(/\/+$/, '');
 
     return new URL(
-      `${baseUrl}/storage/v1/object/${encodeURIComponent(bucket)}/${encodedPath}`,
+      `${baseUrl}/storage/v1/${operationPath}/${encodeURIComponent(bucket)}/${encodedPath}`,
     );
+  }
+
+  private readSignedPath(payload: unknown): string {
+    if (
+      typeof payload !== 'object' ||
+      payload === null ||
+      !('signedURL' in payload) ||
+      typeof payload.signedURL !== 'string' ||
+      !payload.signedURL.startsWith('/object/sign/')
+    ) {
+      throw new Error('Supabase Storage returned an invalid signed URL');
+    }
+
+    return payload.signedURL;
+  }
+
+  private createAbsoluteSignedUrl(signedPath: string): string {
+    const baseUrl = this.config.getSupabaseUrl().replace(/\/+$/, '');
+
+    return new URL(`${baseUrl}/storage/v1${signedPath}`).toString();
   }
 }
