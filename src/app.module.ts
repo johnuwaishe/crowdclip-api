@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { InstagramModule } from './instagram/instagram.module';
 import { DatabaseModule } from './database/database.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { DatabaseModule } from './database/database.module';
     }),
     InstagramModule,
     DatabaseModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
