@@ -7,6 +7,7 @@ import { FansRepository } from '../fans/fans.repository';
 import { FanRow } from '../fans/types/fan-row.type';
 import { ClipsRepository } from './clips.repository';
 import { MediaAssetsRepository } from './media-assets.repository';
+import { ClipReviewRow } from './types/clip-review-row.type';
 import { ClipRow } from './types/clip-row.type';
 import { MediaAssetRow } from './types/media-asset-row.type';
 
@@ -92,6 +93,41 @@ describe('clip workflow repositories', () => {
       created_at: now,
       updated_at: now,
     };
+
+    it('lists a bounded set of recent clips with fans and assets', async () => {
+      const reviewRow: ClipReviewRow = {
+        clip_id: clip.id,
+        media_choice: clip.media_choice,
+        mentioned_at: clip.mentioned_at,
+        clip_created_at: clip.created_at,
+        fan_id: 'fan-id',
+        instagram_scoped_user_id: 'instagram-fan-id',
+        asset_id: 'asset-id',
+        asset_type: 'instagram_story',
+        asset_status: 'stored',
+        storage_bucket: 'clip-media',
+        storage_path: 'clip-id/instagram/asset-id.mp4',
+        mime_type: 'video/mp4',
+        byte_size: '1024',
+        asset_stored_at: now,
+        asset_created_at: now,
+      };
+      query.mockResolvedValueOnce(queryResult([reviewRow]));
+      const repository = new ClipsRepository(databaseService);
+
+      await expect(repository.listRecentForReview(20)).resolves.toEqual([
+        reviewRow,
+      ]);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('LIMIT $1'),
+        [20],
+      );
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('LEFT JOIN public.media_assets'),
+        [20],
+      );
+    });
 
     it('returns a newly inserted clip', async () => {
       query.mockResolvedValueOnce(queryResult([clip]));

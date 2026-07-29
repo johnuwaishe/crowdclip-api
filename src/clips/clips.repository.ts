@@ -3,6 +3,7 @@ import {
   DatabaseExecutor,
   DatabaseService,
 } from '../database/database.service';
+import { ClipReviewRow } from './types/clip-review-row.type';
 import { ClipRow } from './types/clip-row.type';
 
 export interface FindOrCreateClipInput {
@@ -14,6 +15,46 @@ export interface FindOrCreateClipInput {
 @Injectable()
 export class ClipsRepository {
   constructor(private readonly databaseService: DatabaseService) {}
+
+  async listRecentForReview(limit: number): Promise<ClipReviewRow[]> {
+    const result = await this.databaseService.query<ClipReviewRow>(
+      `
+        SELECT
+          clip.id AS clip_id,
+          clip.media_choice,
+          clip.mentioned_at,
+          clip.created_at AS clip_created_at,
+          fan.id AS fan_id,
+          fan.instagram_scoped_user_id,
+          media_asset.id AS asset_id,
+          media_asset.asset_type,
+          media_asset.status AS asset_status,
+          media_asset.storage_bucket,
+          media_asset.storage_path,
+          media_asset.mime_type,
+          media_asset.byte_size,
+          media_asset.stored_at AS asset_stored_at,
+          media_asset.created_at AS asset_created_at
+        FROM (
+          SELECT *
+          FROM public.clips
+          ORDER BY created_at DESC, id DESC
+          LIMIT $1
+        ) AS clip
+        INNER JOIN public.fans AS fan
+          ON fan.id = clip.fan_id
+        LEFT JOIN public.media_assets AS media_asset
+          ON media_asset.clip_id = clip.id
+        ORDER BY
+          clip.created_at DESC,
+          clip.id DESC,
+          media_asset.created_at ASC
+      `,
+      [limit],
+    );
+
+    return result.rows;
+  }
 
   async findOrCreate(
     input: FindOrCreateClipInput,
