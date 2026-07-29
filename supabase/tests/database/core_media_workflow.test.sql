@@ -133,9 +133,11 @@ SELECT throws_ok(
 SELECT throws_ok(
     $$
         INSERT INTO public.clips (fan_id, source_webhook_event_id)
-        SELECT fan_id, source_webhook_event_id
+        SELECT clips.fan_id, clips.source_webhook_event_id
         FROM public.clips
-        LIMIT 1
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
     $$,
     '23505'
 );
@@ -147,9 +149,11 @@ SELECT throws_ok(
             asset_type,
             status
         )
-        SELECT id, 'instagram_story', 'downloading'
+        SELECT clips.id, 'instagram_story', 'downloading'
         FROM public.clips
-        LIMIT 1
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
     $$,
     '23514'
 );
@@ -161,9 +165,11 @@ SELECT throws_ok(
             asset_type,
             status
         )
-        SELECT id, 'instagram_story', 'stored'
+        SELECT clips.id, 'instagram_story', 'stored'
         FROM public.clips
-        LIMIT 1
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
     $$,
     '23514'
 );
@@ -175,9 +181,11 @@ SELECT throws_ok(
             upload_token_hash,
             expires_at
         )
-        SELECT id, 'plaintext-token', NOW() + INTERVAL '7 days'
+        SELECT clips.id, 'plaintext-token', NOW() + INTERVAL '7 days'
         FROM public.clips
-        LIMIT 1
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
     $$,
     '23514'
 );
@@ -189,9 +197,11 @@ SELECT throws_ok(
             upload_token_hash,
             expires_at
         )
-        SELECT id, repeat('b', 64), NOW() - INTERVAL '1 day'
+        SELECT clips.id, repeat('b', 64), NOW() - INTERVAL '1 day'
         FROM public.clips
-        LIMIT 1
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
     $$,
     '23514'
 );
@@ -204,16 +214,26 @@ SELECT lives_ok(
             source_url
         )
         SELECT
-            id,
+            clips.id,
             'instagram_story',
             'https://example.test/story'
-        FROM public.clips;
+        FROM public.clips
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention';
 
         UPDATE public.media_assets
         SET status = 'downloading',
             attempt_count = attempt_count + 1,
             download_started_at = NOW()
-        WHERE asset_type = 'instagram_story';
+        WHERE asset_type = 'instagram_story'
+          AND clip_id = (
+              SELECT clips.id
+              FROM public.clips
+              JOIN public.webhook_events
+                  ON webhook_events.id = clips.source_webhook_event_id
+              WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+          );
 
         UPDATE public.media_assets
         SET status = 'stored',
@@ -222,28 +242,57 @@ SELECT lives_ok(
             mime_type = 'video/mp4',
             byte_size = 1024,
             stored_at = NOW()
-        WHERE asset_type = 'instagram_story';
+        WHERE asset_type = 'instagram_story'
+          AND clip_id = (
+              SELECT clips.id
+              FROM public.clips
+              JOIN public.webhook_events
+                  ON webhook_events.id = clips.source_webhook_event_id
+              WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+          );
 
         UPDATE public.clips
-        SET media_choice = 'request_fan_original';
+        SET media_choice = 'request_fan_original'
+        WHERE source_webhook_event_id = (
+            SELECT id
+            FROM public.webhook_events
+            WHERE external_event_id = 'pgtap-story-mention'
+        );
 
         INSERT INTO public.original_file_requests (
             clip_id,
             upload_token_hash,
             expires_at
         )
-        SELECT id, repeat('a', 64), NOW() + INTERVAL '7 days'
-        FROM public.clips;
+        SELECT clips.id, repeat('a', 64), NOW() + INTERVAL '7 days'
+        FROM public.clips
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention';
 
         UPDATE public.original_file_requests
         SET status = 'sending',
             attempt_count = attempt_count + 1,
-            sending_started_at = NOW();
+            sending_started_at = NOW()
+        WHERE clip_id = (
+            SELECT clips.id
+            FROM public.clips
+            JOIN public.webhook_events
+                ON webhook_events.id = clips.source_webhook_event_id
+            WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        );
 
         UPDATE public.original_file_requests
         SET status = 'sent',
             instagram_message_id = 'pgtap-outgoing-message',
-            sent_at = NOW();
+            sent_at = NOW()
+        WHERE clip_id = (
+            SELECT clips.id
+            FROM public.clips
+            JOIN public.webhook_events
+                ON webhook_events.id = clips.source_webhook_event_id
+            WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        );
 
         INSERT INTO public.media_assets (
             clip_id,
@@ -256,19 +305,29 @@ SELECT lives_ok(
             stored_at
         )
         SELECT
-            id,
+            clips.id,
             'fan_original',
             'stored',
             'clips',
-            id::text || '/fan-original.mov',
+            clips.id::text || '/fan-original.mov',
             'video/quicktime',
             4096,
             NOW()
-        FROM public.clips;
+        FROM public.clips
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention';
 
         UPDATE public.original_file_requests
         SET status = 'fulfilled',
-            fulfilled_at = NOW();
+            fulfilled_at = NOW()
+        WHERE clip_id = (
+            SELECT clips.id
+            FROM public.clips
+            JOIN public.webhook_events
+                ON webhook_events.id = clips.source_webhook_event_id
+            WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        );
 
         UPDATE public.webhook_events
         SET status = 'processed',
@@ -282,14 +341,26 @@ SELECT is(
     (
         SELECT COUNT(*)
         FROM public.media_assets
-        WHERE clip_id = (SELECT id FROM public.clips LIMIT 1)
+        JOIN public.clips
+            ON clips.id = media_assets.clip_id
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
     ),
     2::BIGINT,
     'the Instagram and fan-original versions share one clip'
 );
 
 SELECT is(
-    (SELECT status FROM public.original_file_requests LIMIT 1),
+    (
+        SELECT original_file_requests.status
+        FROM public.original_file_requests
+        JOIN public.clips
+            ON clips.id = original_file_requests.clip_id
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+    ),
     'fulfilled',
     'the original-file request is fulfilled'
 );
@@ -338,11 +409,12 @@ SELECT ok(
 
 SELECT ok(
     (
-        SELECT COUNT(*) = 3
+        SELECT COUNT(*) = 4
         FROM pg_indexes
         WHERE schemaname = 'public'
           AND indexname IN (
               'webhook_events_status_idx',
+              'webhook_events_processing_started_at_idx',
               'media_assets_status_created_at_idx',
               'original_file_requests_status_expires_at_idx'
           )
