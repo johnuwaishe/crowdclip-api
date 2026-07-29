@@ -3,6 +3,7 @@ import {
   DatabaseExecutor,
   DatabaseService,
 } from '../database/database.service';
+import { ArtistClipMediaChoice } from './types/clip-decision.type';
 import { ClipReviewRow } from './types/clip-review-row.type';
 import { ClipRow } from './types/clip-row.type';
 
@@ -15,6 +16,48 @@ export interface FindOrCreateClipInput {
 @Injectable()
 export class ClipsRepository {
   constructor(private readonly databaseService: DatabaseService) {}
+
+  async findByIdForUpdate(
+    clipId: string,
+    executor: DatabaseExecutor,
+  ): Promise<ClipRow | null> {
+    const result = await executor.query<ClipRow>(
+      `
+        SELECT *
+        FROM public.clips
+        WHERE id = $1
+        FOR UPDATE
+      `,
+      [clipId],
+    );
+
+    return result.rows[0] ?? null;
+  }
+
+  async updateMediaChoice(
+    clipId: string,
+    mediaChoice: ArtistClipMediaChoice,
+    executor: DatabaseExecutor,
+  ): Promise<ClipRow> {
+    const result = await executor.query<ClipRow>(
+      `
+        UPDATE public.clips
+        SET media_choice = $2
+        WHERE id = $1
+          AND media_choice = 'undecided'
+        RETURNING *
+      `,
+      [clipId, mediaChoice],
+    );
+
+    const clip = result.rows[0];
+
+    if (!clip) {
+      throw new Error('Clip media choice was not updated');
+    }
+
+    return clip;
+  }
 
   async listRecentForReview(limit: number): Promise<ClipReviewRow[]> {
     const result = await this.databaseService.query<ClipReviewRow>(

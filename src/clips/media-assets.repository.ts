@@ -23,6 +23,25 @@ export interface StoreMediaAssetInput {
 export class MediaAssetsRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
+  async findStoredByClipAndType(
+    clipId: string,
+    assetType: MediaAssetType,
+    executor: DatabaseExecutor = this.databaseService,
+  ): Promise<MediaAssetRow | null> {
+    const result = await executor.query<MediaAssetRow>(
+      `
+        SELECT *
+        FROM public.media_assets
+        WHERE clip_id = $1
+          AND asset_type = $2
+          AND status = 'stored'
+      `,
+      [clipId, assetType],
+    );
+
+    return result.rows[0] ?? null;
+  }
+
   async findOrCreate(
     input: FindOrCreateMediaAssetInput,
     executor: DatabaseExecutor = this.databaseService,

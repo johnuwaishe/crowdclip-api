@@ -7,9 +7,11 @@ import { FansRepository } from '../fans/fans.repository';
 import { FanRow } from '../fans/types/fan-row.type';
 import { ClipsRepository } from './clips.repository';
 import { MediaAssetsRepository } from './media-assets.repository';
+import { OriginalFileRequestsRepository } from './original-file-requests.repository';
 import { ClipReviewRow } from './types/clip-review-row.type';
 import { ClipRow } from './types/clip-row.type';
 import { MediaAssetRow } from './types/media-asset-row.type';
+import { OriginalFileRequestRow } from './types/original-file-request-row.type';
 
 function queryResult<T extends QueryResultRow>(rows: T[]): QueryResult<T> {
   return {
@@ -93,6 +95,38 @@ describe('clip workflow repositories', () => {
       created_at: now,
       updated_at: now,
     };
+
+    it('locks a clip before making a decision', async () => {
+      query.mockResolvedValueOnce(queryResult([clip]));
+      const repository = new ClipsRepository(databaseService);
+
+      await expect(
+        repository.findByIdForUpdate(clip.id, executor),
+      ).resolves.toBe(clip);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('FOR UPDATE'),
+        [clip.id],
+      );
+    });
+
+    it('updates only an undecided clip', async () => {
+      const updatedClip: ClipRow = {
+        ...clip,
+        media_choice: 'use_instagram_story',
+      };
+      query.mockResolvedValueOnce(queryResult([updatedClip]));
+      const repository = new ClipsRepository(databaseService);
+
+      await expect(
+        repository.updateMediaChoice(clip.id, 'use_instagram_story', executor),
+      ).resolves.toBe(updatedClip);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("AND media_choice = 'undecided'"),
+        [clip.id, 'use_instagram_story'],
+      );
+    });
 
     it('lists a bounded set of recent clips with fans and assets', async () => {
       const reviewRow: ClipReviewRow = {
@@ -194,6 +228,31 @@ describe('clip workflow repositories', () => {
       created_at: now,
       updated_at: now,
     };
+
+    it('finds a stored media version for a decision', async () => {
+      const storedAsset: MediaAssetRow = {
+        ...asset,
+        status: 'stored',
+        storage_bucket: 'clip-media',
+        storage_path: 'clip-id/instagram/asset-id.mp4',
+        stored_at: now,
+      };
+      query.mockResolvedValueOnce(queryResult([storedAsset]));
+      const repository = new MediaAssetsRepository(databaseService);
+
+      await expect(
+        repository.findStoredByClipAndType(
+          'clip-id',
+          'instagram_story',
+          executor,
+        ),
+      ).resolves.toBe(storedAsset);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("AND status = 'stored'"),
+        ['clip-id', 'instagram_story'],
+      );
+    });
 
     it('returns a newly inserted media asset', async () => {
       query.mockResolvedValueOnce(queryResult([asset]));
@@ -332,6 +391,59 @@ describe('clip workflow repositories', () => {
         2,
         expect.stringContaining('AND download_started_at < $1'),
         [now, 3, 'Download lease expired before completion'],
+      );
+    });
+  });
+
+  describe('OriginalFileRequestsRepository', () => {
+    const request: OriginalFileRequestRow = {
+      id: 'request-id',
+      clip_id: 'clip-id',
+      status: 'pending',
+      upload_token_hash: 'a'.repeat(64),
+      expires_at: new Date('2026-08-05T17:00:00.000Z'),
+      instagram_message_id: null,
+      attempt_count: 0,
+      last_error: null,
+      sending_started_at: null,
+      sent_at: null,
+      fulfilled_at: null,
+      created_at: now,
+      updated_at: now,
+    };
+
+    it('creates an expiring request with only the token hash', async () => {
+      query.mockResolvedValueOnce(queryResult([request]));
+      const repository = new OriginalFileRequestsRepository(databaseService);
+
+      await expect(
+        repository.create(
+          {
+            clipId: 'clip-id',
+            uploadTokenHash: 'a'.repeat(64),
+            ttlSeconds: 604800,
+          },
+          executor,
+        ),
+      ).resolves.toBe(request);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("INTERVAL '1 second'"),
+        ['clip-id', 'a'.repeat(64), 604800],
+      );
+    });
+
+    it('finds an existing request for an idempotent decision', async () => {
+      query.mockResolvedValueOnce(queryResult([request]));
+      const repository = new OriginalFileRequestsRepository(databaseService);
+
+      await expect(repository.findByClipId('clip-id', executor)).resolves.toBe(
+        request,
+      );
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('WHERE clip_id = $1'),
+        ['clip-id'],
       );
     });
   });
