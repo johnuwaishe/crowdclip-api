@@ -16,7 +16,9 @@ export class MetaSignatureService {
   constructor(private readonly configService: ConfigService) {}
 
   verifySignature({ rawBody, signature }: VerifySignatureInput): void {
-    const appSecret = this.configService.getOrThrow('INSTAGRAM_APP_SECRET');
+    const appSecret = this.configService.getOrThrow<string>(
+      'INSTAGRAM_APP_SECRET',
+    );
 
     if (!signature) {
       throw new UnauthorizedException('Missing webhook signature');

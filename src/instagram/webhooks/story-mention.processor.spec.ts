@@ -37,6 +37,7 @@ describe('StoryMentionProcessor', () => {
     claimNextPendingByType: jest.fn(),
     markProcessed: jest.fn(),
     markFailed: jest.fn(),
+    releaseAfterFailure: jest.fn(),
   };
   const fansRepository = {
     findOrCreate: jest.fn(),
@@ -72,6 +73,7 @@ describe('StoryMentionProcessor', () => {
     occurred_at: now,
     received_at: now,
     processing_started_at: now,
+    next_attempt_at: null,
     processed_at: null,
     created_at: now,
     updated_at: now,
@@ -216,24 +218,29 @@ describe('StoryMentionProcessor', () => {
     );
   });
 
-  it('marks an event failed when transactional work fails', async () => {
+  it('releases an event for retry when transactional work fails', async () => {
     transactionError = new Error('Database transaction failed');
     webhookEventsRepository.claimNextPendingByType.mockResolvedValueOnce(event);
-    webhookEventsRepository.markFailed.mockResolvedValueOnce({
+    webhookEventsRepository.releaseAfterFailure.mockResolvedValueOnce({
       ...event,
-      status: 'failed',
+      status: 'pending',
+      processing_started_at: null,
+      next_attempt_at: new Date(now.getTime() + 60_000),
     });
 
     await expect(processor.processNext()).resolves.toEqual({
-      status: 'failed',
+      status: 'retrying',
       eventId: event.id,
       error: 'Database transaction failed',
     });
 
-    expect(webhookEventsRepository.markFailed).toHaveBeenCalledWith(
+    expect(webhookEventsRepository.releaseAfterFailure).toHaveBeenCalledWith(
       event.id,
       'Database transaction failed',
+      3,
+      expect.any(Date),
     );
+    expect(webhookEventsRepository.markFailed).not.toHaveBeenCalled();
   });
 
   it('fails loudly if the claimed event cannot transition to failed', async () => {
@@ -244,7 +251,7 @@ describe('StoryMentionProcessor', () => {
     webhookEventsRepository.markFailed.mockResolvedValueOnce(null);
 
     await expect(processor.processNext()).rejects.toThrow(
-      'Webhook event could not be marked failed from its current state',
+      'Webhook event could not be released after a processing failure',
     );
   });
 });

@@ -15,9 +15,11 @@ const DEFAULT_POLL_INTERVAL_MS = 2_000;
 const DEFAULT_BATCH_SIZE = 10;
 const DEFAULT_STALE_AFTER_MS = 5 * 60 * 1_000;
 const DEFAULT_MAX_ATTEMPTS = 3;
+const DEFAULT_RETRY_DELAY_MS = 60_000;
 
 export interface StoryMentionWorkerSummary {
   processed: number;
+  retrying: number;
   failed: number;
   requeued: number;
   abandoned: number;
@@ -33,6 +35,7 @@ export class StoryMentionWorker
   private readonly batchSize: number;
   private readonly staleAfterMs: number;
   private readonly maxAttempts: number;
+  private readonly retryDelayMs: number;
 
   private timer: NodeJS.Timeout | undefined;
   private activeRun: Promise<void> | null = null;
@@ -73,6 +76,12 @@ export class StoryMentionWorker
       DEFAULT_MAX_ATTEMPTS,
       1,
       20,
+    );
+    this.retryDelayMs = this.readBoundedInteger(
+      'STORY_MENTION_WORKER_RETRY_DELAY_MS',
+      DEFAULT_RETRY_DELAY_MS,
+      1_000,
+      60 * 60 * 1_000,
     );
   }
 
@@ -116,6 +125,7 @@ export class StoryMentionWorker
 
     const summary: StoryMentionWorkerSummary = {
       processed: 0,
+      retrying: 0,
       failed: 0,
       requeued: recoveredEvents.filter((event) => event.status === 'pending')
         .length,
@@ -124,7 +134,10 @@ export class StoryMentionWorker
     };
 
     for (let index = 0; index < this.batchSize; index += 1) {
-      const result = await this.storyMentionProcessor.processNext();
+      const result = await this.storyMentionProcessor.processNext(
+        this.maxAttempts,
+        this.retryDelayMs,
+      );
 
       if (result.status === 'idle') {
         break;
@@ -142,6 +155,8 @@ export class StoryMentionWorker
   ): void {
     if (result.status === 'processed') {
       summary.processed += 1;
+    } else if (result.status === 'retrying') {
+      summary.retrying += 1;
     } else {
       summary.failed += 1;
     }
@@ -170,13 +185,14 @@ export class StoryMentionWorker
       const summary = await this.runOnce();
       const activity =
         summary.processed +
+        summary.retrying +
         summary.failed +
         summary.requeued +
         summary.abandoned;
 
       if (activity > 0) {
         this.logger.log(
-          `Story mention worker cycle: ${summary.processed} processed, ${summary.failed} failed, ${summary.requeued} requeued, ${summary.abandoned} abandoned`,
+          `Story mention worker cycle: ${summary.processed} processed, ${summary.retrying} retrying, ${summary.failed} failed, ${summary.requeued} requeued, ${summary.abandoned} abandoned`,
         );
       }
     } catch (error) {

@@ -9,11 +9,12 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
+import type { RawBodyRequest } from '@nestjs/common';
 import { InstagramWebhookService } from './instagram-webhook.service';
 import { MetaSignatureService } from '../meta-signature.service';
 import type { Request } from 'express';
-import type { RawBodyRequest } from 'body-parser';
 import { ConfigService } from '@nestjs/config';
+import { InvalidInstagramWebhookPayloadError } from './instagram-webhook-payload.parser';
 
 @Controller('webhooks/instagram')
 export class InstagramWebhookController {
@@ -29,7 +30,7 @@ export class InstagramWebhookController {
     @Query('hub.challenge') challenge: string,
     @Query('hub.verify_token') suppliedToken: string,
   ): string {
-    const expectedToken = this.configService.getOrThrow(
+    const expectedToken = this.configService.getOrThrow<string>(
       'INSTAGRAM_WEBHOOK_VERIFY_TOKEN',
     );
 
@@ -63,7 +64,15 @@ export class InstagramWebhookController {
       signature,
     });
 
-    await this.webhookService.handleWebhookPayload(payload);
+    try {
+      await this.webhookService.handleWebhookPayload(payload);
+    } catch (error) {
+      if (error instanceof InvalidInstagramWebhookPayloadError) {
+        throw new BadRequestException(error.message);
+      }
+
+      throw error;
+    }
 
     return { received: true };
   }

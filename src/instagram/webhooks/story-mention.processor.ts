@@ -3,7 +3,10 @@ import { ClipsRepository } from '../../clips/clips.repository';
 import { MediaAssetsRepository } from '../../clips/media-assets.repository';
 import { DatabaseService } from '../../database/database.service';
 import { FansRepository } from '../../fans/fans.repository';
-import { normalizeInstagramStoryMention } from './instagram-story-mention.parser';
+import {
+  InvalidInstagramStoryMentionError,
+  normalizeInstagramStoryMention,
+} from './instagram-story-mention.parser';
 import { WebhookEventsRepository } from './webhook-events.repository';
 
 const MAX_ERROR_MESSAGE_LENGTH = 2_000;
@@ -17,7 +20,7 @@ export type StoryMentionProcessingResult =
       mediaAssetId: string;
     }
   | {
-      status: 'failed';
+      status: 'retrying' | 'failed';
       eventId: string;
       error: string;
     };
@@ -34,7 +37,10 @@ export class StoryMentionProcessor {
     private readonly mediaAssetsRepository: MediaAssetsRepository,
   ) {}
 
-  async processNext(): Promise<StoryMentionProcessingResult> {
+  async processNext(
+    maxAttempts = 3,
+    retryDelayMs = 60_000,
+  ): Promise<StoryMentionProcessingResult> {
     const event =
       await this.webhookEventsRepository.claimNextPendingByType(
         'story_mention',
@@ -109,20 +115,28 @@ export class StoryMentionProcessor {
         error instanceof Error ? error.stack : undefined,
       );
 
-      const failedEvent = await this.webhookEventsRepository.markFailed(
-        event.id,
-        errorMessage,
-      );
+      const releasedEvent =
+        error instanceof InvalidInstagramStoryMentionError
+          ? await this.webhookEventsRepository.markFailed(
+              event.id,
+              errorMessage,
+            )
+          : await this.webhookEventsRepository.releaseAfterFailure(
+              event.id,
+              errorMessage,
+              maxAttempts,
+              new Date(Date.now() + retryDelayMs),
+            );
 
-      if (!failedEvent) {
+      if (!releasedEvent) {
         throw new Error(
-          'Webhook event could not be marked failed from its current state',
+          'Webhook event could not be released after a processing failure',
           { cause: error },
         );
       }
 
       return {
-        status: 'failed',
+        status: releasedEvent.status === 'failed' ? 'failed' : 'retrying',
         eventId: event.id,
         error: errorMessage,
       };

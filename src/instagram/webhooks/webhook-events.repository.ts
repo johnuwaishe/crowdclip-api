@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { WebhookEventRow } from './types/webhook-event-row.type';
+import {
+  WebhookEventRow,
+  WebhookEventStatus,
+} from './types/webhook-event-row.type';
 import {
   DatabaseExecutor,
   DatabaseService,
@@ -8,9 +11,10 @@ import {
 interface CreateWebhookEventInput {
   externalEventId: string;
   eventType: string;
+  initialStatus: Extract<WebhookEventStatus, 'pending' | 'ignored'>;
   senderId: string;
   recipientId: string;
-  payload: Record<string, unknown>;
+  payload: object;
   occurredAt: Date | null;
 }
 
@@ -30,9 +34,20 @@ export class WebhookEventsRepository {
           sender_id,
           recipient_id,
           payload,
-          occurred_at
+          occurred_at,
+          status,
+          processed_at
         )
-        VALUES ($1, $2, $3, $4, $5::jsonb, $6)
+        VALUES (
+          $1,
+          $2,
+          $3,
+          $4,
+          $5::jsonb,
+          $6,
+          $7,
+          CASE WHEN $7 = 'ignored' THEN NOW() ELSE NULL END
+        )
         ON CONFLICT (external_event_id)
         DO NOTHING
         RETURNING *
@@ -44,6 +59,7 @@ export class WebhookEventsRepository {
         input.recipientId,
         JSON.stringify(input.payload),
         input.occurredAt,
+        input.initialStatus,
       ],
     );
 
@@ -60,6 +76,10 @@ export class WebhookEventsRepository {
           FROM public.webhook_events
           WHERE status = 'pending'
             AND event_type = $1
+            AND (
+              next_attempt_at IS NULL
+              OR next_attempt_at <= NOW()
+            )
           ORDER BY received_at
           FOR UPDATE SKIP LOCKED
           LIMIT 1
@@ -68,7 +88,8 @@ export class WebhookEventsRepository {
         SET status = 'processing',
             attempt_count = webhook_event.attempt_count + 1,
             last_error = NULL,
-            processing_started_at = NOW()
+            processing_started_at = NOW(),
+            next_attempt_at = NULL
         FROM next_event
         WHERE webhook_event.id = next_event.id
         RETURNING webhook_event.*
@@ -92,7 +113,11 @@ export class WebhookEventsRepository {
               ELSE 'pending'
             END,
             last_error = $4,
-            processing_started_at = NULL
+            processing_started_at = NULL,
+            next_attempt_at = CASE
+              WHEN attempt_count >= $3 THEN NULL
+              ELSE NOW()
+            END
         WHERE status = 'processing'
           AND event_type = $1
           AND processing_started_at < $2
@@ -118,6 +143,7 @@ export class WebhookEventsRepository {
         UPDATE public.webhook_events
         SET status = 'processed',
             last_error = NULL,
+            next_attempt_at = NULL,
             processed_at = NOW()
         WHERE id = $1
           AND status = 'processing'
@@ -138,12 +164,44 @@ export class WebhookEventsRepository {
       `
         UPDATE public.webhook_events
         SET status = 'failed',
-            last_error = $2
+            last_error = $2,
+            processing_started_at = NULL,
+            next_attempt_at = NULL
         WHERE id = $1
           AND status = 'processing'
         RETURNING *
       `,
       [id, errorMessage],
+    );
+
+    return result.rows[0] ?? null;
+  }
+
+  async releaseAfterFailure(
+    id: string,
+    errorMessage: string,
+    maxAttempts: number,
+    nextAttemptAt: Date,
+    executor: DatabaseExecutor = this.databaseService,
+  ): Promise<WebhookEventRow | null> {
+    const result = await executor.query<WebhookEventRow>(
+      `
+        UPDATE public.webhook_events
+        SET status = CASE
+              WHEN attempt_count >= $3 THEN 'failed'
+              ELSE 'pending'
+            END,
+            last_error = $2,
+            processing_started_at = NULL,
+            next_attempt_at = CASE
+              WHEN attempt_count >= $3 THEN NULL
+              ELSE $4
+            END
+        WHERE id = $1
+          AND status = 'processing'
+        RETURNING *
+      `,
+      [id, errorMessage, maxAttempts, nextAttemptAt],
     );
 
     return result.rows[0] ?? null;
@@ -158,6 +216,7 @@ export class WebhookEventsRepository {
         UPDATE public.webhook_events
         SET status = 'ignored',
             last_error = NULL,
+            next_attempt_at = NULL,
             processed_at = NOW()
         WHERE id = $1
           AND status = 'processing'

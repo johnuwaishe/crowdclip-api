@@ -14,6 +14,7 @@ export interface WebhookEventRow {
   occurred_at: Date | null;
   received_at: Date;
   processing_started_at: Date | null;
+  next_attempt_at: Date | null;
   processed_at: Date | null;
   created_at: Date;
   updated_at: Date;

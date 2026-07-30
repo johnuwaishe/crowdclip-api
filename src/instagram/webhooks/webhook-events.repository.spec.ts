@@ -33,6 +33,7 @@ describe('WebhookEventsRepository', () => {
     occurred_at: now,
     received_at: now,
     processing_started_at: now,
+    next_attempt_at: null,
     processed_at: null,
     created_at: now,
     updated_at: now,
@@ -52,6 +53,7 @@ describe('WebhookEventsRepository', () => {
       repository.createIfNotExists({
         externalEventId: 'instagram-message-id',
         eventType: 'story_mention',
+        initialStatus: 'pending',
         senderId: 'fan-id',
         recipientId: 'artist-id',
         payload: { message: { mid: 'instagram-message-id' } },
@@ -68,7 +70,29 @@ describe('WebhookEventsRepository', () => {
         'artist-id',
         JSON.stringify({ message: { mid: 'instagram-message-id' } }),
         now,
+        'pending',
       ],
+    );
+  });
+
+  it('persists unsupported events as already ignored', async () => {
+    query.mockResolvedValueOnce(
+      queryResult([{ ...event, event_type: 'message', status: 'ignored' }]),
+    );
+
+    await repository.createIfNotExists({
+      externalEventId: 'unsupported-message-id',
+      eventType: 'message',
+      initialStatus: 'ignored',
+      senderId: 'fan-id',
+      recipientId: 'artist-id',
+      payload: { message: { mid: 'unsupported-message-id', text: 'hello' } },
+      occurredAt: now,
+    });
+
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining("CASE WHEN $7 = 'ignored' THEN NOW()"),
+      expect.arrayContaining(['ignored']),
     );
   });
 
@@ -95,6 +119,36 @@ describe('WebhookEventsRepository', () => {
     await expect(
       repository.claimNextPendingByType('story_mention'),
     ).resolves.toBeNull();
+  });
+
+  it('releases transient failures for a delayed retry', async () => {
+    const nextAttemptAt = new Date('2026-07-29T17:01:00.000Z');
+    query.mockResolvedValueOnce(
+      queryResult([
+        {
+          ...event,
+          status: 'pending',
+          processing_started_at: null,
+          next_attempt_at: nextAttemptAt,
+        },
+      ]),
+    );
+
+    await repository.releaseAfterFailure(
+      event.id,
+      'Database unavailable',
+      3,
+      nextAttemptAt,
+    );
+
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('WHEN attempt_count >= $3'),
+      [event.id, 'Database unavailable', 3, nextAttemptAt],
+    );
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('ELSE $4'),
+      expect.any(Array),
+    );
   });
 
   it('requeues stale events and abandons events at the attempt limit', async () => {

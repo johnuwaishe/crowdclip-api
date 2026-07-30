@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 
 SET LOCAL search_path = public, extensions;
 
-SELECT plan(28);
+SELECT plan(29);
 
 SELECT has_table('public', 'fans', 'fans table exists');
 SELECT has_table('public', 'clips', 'clips table exists');
@@ -13,6 +13,12 @@ SELECT has_table(
     'public',
     'original_file_requests',
     'original_file_requests table exists'
+);
+SELECT has_column(
+    'public',
+    'webhook_events',
+    'next_attempt_at',
+    'webhook events can delay retry attempts'
 );
 
 SELECT has_trigger(

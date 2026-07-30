@@ -20,6 +20,7 @@ describe('StoryMentionWorker', () => {
     occurred_at: now,
     received_at: now,
     processing_started_at: now,
+    next_attempt_at: null,
     processed_at: null,
     created_at: now,
     updated_at: now,
@@ -89,15 +90,16 @@ describe('StoryMentionWorker', () => {
         mediaAssetId: 'asset-id',
       })
       .mockResolvedValueOnce({
-        status: 'failed',
-        eventId: 'failed-event-id',
-        error: 'Invalid event',
+        status: 'retrying',
+        eventId: 'retrying-event-id',
+        error: 'Temporary database error',
       })
       .mockResolvedValueOnce({ status: 'idle' });
 
     await expect(createWorker().runOnce()).resolves.toEqual({
       processed: 1,
-      failed: 1,
+      retrying: 1,
+      failed: 0,
       requeued: 1,
       abandoned: 1,
     });
@@ -116,12 +118,14 @@ describe('StoryMentionWorker', () => {
 
     await expect(createWorker().runOnce()).resolves.toEqual({
       processed: 2,
+      retrying: 0,
       failed: 0,
       requeued: 0,
       abandoned: 0,
     });
 
     expect(storyMentionProcessor.processNext).toHaveBeenCalledTimes(2);
+    expect(storyMentionProcessor.processNext).toHaveBeenCalledWith(3, 60_000);
   });
 
   it('does not schedule polling in the test environment by default', () => {
