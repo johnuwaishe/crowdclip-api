@@ -48,6 +48,9 @@ lerna-debug.log*
 .temp
 .tmp
 
+# Local implementation plans
+/docs/plans/
+
 # Runtime data
 pids
 *.pid

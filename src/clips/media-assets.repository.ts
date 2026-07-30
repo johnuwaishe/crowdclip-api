@@ -122,6 +122,7 @@ export class MediaAssetsRepository {
       `
         UPDATE public.media_assets
         SET status = 'stored',
+            source_url = NULL,
             storage_bucket = $2,
             storage_path = $3,
             mime_type = $4,

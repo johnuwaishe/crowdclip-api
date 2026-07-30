@@ -92,10 +92,15 @@ $ curl --request PATCH \
 ```
 
 Use `request_fan_original` instead to create an original-file request. That
-response contains a one-time `uploadPath` for the upcoming fan upload flow. The
-raw token appears only in the first response; CrowdClip persists only its
-SHA-256 hash. Repeating the same decision is safe but does not issue the path
-again. Attempting to change an existing decision returns `409`.
+response contains an `uploadPath` for the upcoming fan upload flow. CrowdClip
+persists only its SHA-256 hash; the signed raw token can be reproduced from the
+request ID and expiry for safe delivery retries. Repeating the same decision
+returns the same unexpired path. Attempting to change an existing decision
+returns `409`.
+
+Set `ORIGINAL_FILE_UPLOAD_TOKEN_SECRET` to a secret containing at least 32
+bytes. It signs original-file upload links and must remain stable across
+deployments.
 
 Choosing `use_instagram_story` requires the Instagram asset to have reached
 `stored`. Automatic Instagram messaging and the fan upload endpoint are the

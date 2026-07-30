@@ -56,9 +56,11 @@ describe('ClipsService', () => {
     create: createOriginalFileRequest,
     findByClipId: findOriginalFileRequestByClipId,
   } as unknown as OriginalFileRequestsRepository;
-  const generateUploadToken = jest.fn();
+  const issueUploadToken = jest.fn();
+  const recreateUploadToken = jest.fn();
   const uploadTokenService = {
-    generate: generateUploadToken,
+    issue: issueUploadToken,
+    recreate: recreateUploadToken,
   } as unknown as OriginalFileUploadTokenService;
 
   const clipCreatedAt = new Date('2026-07-29T17:00:00.000Z');
@@ -275,14 +277,16 @@ describe('ClipsService', () => {
     expect(withTransaction).toHaveBeenCalledTimes(1);
   });
 
-  it('creates an original-file request and discloses its upload path once', async () => {
+  it('creates an original-file request and returns its upload path', async () => {
     const updatedClip: ClipRow = {
       ...clip,
       media_choice: 'request_fan_original',
     };
     findByIdForUpdate.mockResolvedValueOnce(clip);
     updateMediaChoice.mockResolvedValueOnce(updatedClip);
-    generateUploadToken.mockReturnValueOnce({
+    issueUploadToken.mockReturnValueOnce({
+      requestId: originalFileRequest.id,
+      expiresAt: originalFileRequest.expires_at,
       rawToken: 'raw-upload-token',
       tokenHash: 'a'.repeat(64),
     });
@@ -305,21 +309,57 @@ describe('ClipsService', () => {
 
     expect(createOriginalFileRequest).toHaveBeenCalledWith(
       {
+        id: originalFileRequest.id,
         clipId: clip.id,
         uploadTokenHash: 'a'.repeat(64),
-        ttlSeconds: 604800,
+        expiresAt: originalFileRequest.expires_at,
       },
       transaction,
     );
+    expect(issueUploadToken).toHaveBeenCalledWith(604800);
   });
 
-  it('returns an existing same decision without issuing another token', async () => {
+  it('recreates the upload path for an existing same decision', async () => {
     const decidedClip: ClipRow = {
       ...clip,
       media_choice: 'request_fan_original',
     };
     findByIdForUpdate.mockResolvedValueOnce(decidedClip);
     findOriginalFileRequestByClipId.mockResolvedValueOnce(originalFileRequest);
+    recreateUploadToken.mockReturnValueOnce({
+      requestId: originalFileRequest.id,
+      expiresAt: originalFileRequest.expires_at,
+      rawToken: 'raw-upload-token',
+      tokenHash: originalFileRequest.upload_token_hash,
+    });
+    const service = createService();
+
+    const result = await service.decideMediaChoice(
+      clip.id,
+      'request_fan_original',
+    );
+
+    expect(result.originalFileRequest?.uploadPath).toBe(
+      '/uploads/original/raw-upload-token',
+    );
+    expect(recreateUploadToken).toHaveBeenCalledWith(
+      originalFileRequest.id,
+      originalFileRequest.expires_at,
+    );
+    expect(issueUploadToken).not.toHaveBeenCalled();
+    expect(updateMediaChoice).not.toHaveBeenCalled();
+  });
+
+  it('does not return an upload path for an expired request', async () => {
+    const expiredRequest: OriginalFileRequestRow = {
+      ...originalFileRequest,
+      status: 'expired',
+    };
+    findByIdForUpdate.mockResolvedValueOnce({
+      ...clip,
+      media_choice: 'request_fan_original',
+    });
+    findOriginalFileRequestByClipId.mockResolvedValueOnce(expiredRequest);
     const service = createService();
 
     const result = await service.decideMediaChoice(
@@ -328,8 +368,7 @@ describe('ClipsService', () => {
     );
 
     expect(result.originalFileRequest?.uploadPath).toBeNull();
-    expect(generateUploadToken).not.toHaveBeenCalled();
-    expect(updateMediaChoice).not.toHaveBeenCalled();
+    expect(recreateUploadToken).not.toHaveBeenCalled();
   });
 
   it('rejects changing an existing decision', async () => {

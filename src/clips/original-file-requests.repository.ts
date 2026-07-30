@@ -6,9 +6,10 @@ import {
 import { OriginalFileRequestRow } from './types/original-file-request-row.type';
 
 export interface CreateOriginalFileRequestInput {
+  id: string;
   clipId: string;
   uploadTokenHash: string;
-  ttlSeconds: number;
+  expiresAt: Date;
 }
 
 @Injectable()
@@ -22,18 +23,15 @@ export class OriginalFileRequestsRepository {
     const result = await executor.query<OriginalFileRequestRow>(
       `
         INSERT INTO public.original_file_requests (
+          id,
           clip_id,
           upload_token_hash,
           expires_at
         )
-        VALUES (
-          $1,
-          $2,
-          NOW() + ($3 * INTERVAL '1 second')
-        )
+        VALUES ($1, $2, $3, $4)
         RETURNING *
       `,
-      [input.clipId, input.uploadTokenHash, input.ttlSeconds],
+      [input.id, input.clipId, input.uploadTokenHash, input.expiresAt],
     );
 
     const request = result.rows[0];

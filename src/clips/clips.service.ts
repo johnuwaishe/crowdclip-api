@@ -158,7 +158,9 @@ export class ClipsService {
       );
     }
 
-    return this.createDecisionResult(clip, request, null);
+    const uploadPath = this.recreateUploadPath(request);
+
+    return this.createDecisionResult(clip, request, uploadPath);
   }
 
   private async chooseInstagramStory(
@@ -191,7 +193,9 @@ export class ClipsService {
     clip: ClipRow,
     transaction: DatabaseExecutor,
   ): Promise<ClipDecisionResult> {
-    const token = this.uploadTokenService.generate();
+    const token = this.uploadTokenService.issue(
+      ORIGINAL_FILE_REQUEST_TTL_SECONDS,
+    );
     const updatedClip = await this.clipsRepository.updateMediaChoice(
       clip.id,
       'request_fan_original',
@@ -199,17 +203,46 @@ export class ClipsService {
     );
     const request = await this.originalFileRequestsRepository.create(
       {
+        id: token.requestId,
         clipId: clip.id,
         uploadTokenHash: token.tokenHash,
-        ttlSeconds: ORIGINAL_FILE_REQUEST_TTL_SECONDS,
+        expiresAt: token.expiresAt,
       },
       transaction,
     );
-    const uploadPath = `${ORIGINAL_FILE_UPLOAD_PATH}/${encodeURIComponent(
-      token.rawToken,
-    )}`;
+    const uploadPath = this.createUploadPath(token.rawToken);
 
     return this.createDecisionResult(updatedClip, request, uploadPath);
+  }
+
+  private recreateUploadPath(request: OriginalFileRequestRow): string | null {
+    if (
+      request.expires_at.getTime() <= Date.now() ||
+      request.status === 'expired' ||
+      request.status === 'cancelled' ||
+      request.status === 'fulfilled'
+    ) {
+      return null;
+    }
+
+    const token = this.uploadTokenService.recreate(
+      request.id,
+      request.expires_at,
+    );
+
+    if (token.tokenHash !== request.upload_token_hash) {
+      this.logger.warn(
+        `Original-file request ${request.id} uses a legacy non-reproducible upload token`,
+      );
+
+      return null;
+    }
+
+    return this.createUploadPath(token.rawToken);
+  }
+
+  private createUploadPath(rawToken: string): string {
+    return `${ORIGINAL_FILE_UPLOAD_PATH}/${encodeURIComponent(rawToken)}`;
   }
 
   private createDecisionResult(

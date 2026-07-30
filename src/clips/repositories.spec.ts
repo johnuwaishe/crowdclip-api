@@ -354,6 +354,10 @@ describe('clip workflow repositories', () => {
           1024,
         ],
       );
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining('source_url = NULL'),
+        expect.any(Array),
+      );
     });
 
     it('schedules retryable failures and recovers stale downloads', async () => {
@@ -419,17 +423,18 @@ describe('clip workflow repositories', () => {
       await expect(
         repository.create(
           {
+            id: request.id,
             clipId: 'clip-id',
             uploadTokenHash: 'a'.repeat(64),
-            ttlSeconds: 604800,
+            expiresAt: request.expires_at,
           },
           executor,
         ),
       ).resolves.toBe(request);
 
       expect(query).toHaveBeenCalledWith(
-        expect.stringContaining("INTERVAL '1 second'"),
-        ['clip-id', 'a'.repeat(64), 604800],
+        expect.stringContaining('VALUES ($1, $2, $3, $4)'),
+        [request.id, 'clip-id', 'a'.repeat(64), request.expires_at],
       );
     });
 
