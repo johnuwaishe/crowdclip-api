@@ -104,6 +104,8 @@ describe('ClipsService', () => {
     last_error: null,
     sending_started_at: null,
     sent_at: null,
+    upload_started_at: null,
+    upload_lease_id: null,
     fulfilled_at: null,
     created_at: clipCreatedAt,
     updated_at: clipCreatedAt,

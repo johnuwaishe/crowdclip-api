@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 
 SET LOCAL search_path = public, extensions;
 
-SELECT plan(29);
+SELECT plan(32);
 
 SELECT has_table('public', 'fans', 'fans table exists');
 SELECT has_table('public', 'clips', 'clips table exists');
@@ -19,6 +19,18 @@ SELECT has_column(
     'webhook_events',
     'next_attempt_at',
     'webhook events can delay retry attempts'
+);
+SELECT has_column(
+    'public',
+    'original_file_requests',
+    'upload_started_at',
+    'original-file requests track upload leases'
+);
+SELECT has_column(
+    'public',
+    'original_file_requests',
+    'upload_lease_id',
+    'original-file upload attempts have unique lease owners'
 );
 
 SELECT has_trigger(
@@ -212,6 +224,27 @@ SELECT throws_ok(
     '23514'
 );
 
+SELECT throws_ok(
+    $$
+        INSERT INTO public.original_file_requests (
+            clip_id,
+            upload_token_hash,
+            expires_at,
+            status
+        )
+        SELECT
+            clips.id,
+            repeat('c', 64),
+            NOW() + INTERVAL '7 days',
+            'uploading'
+        FROM public.clips
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+    $$,
+    '23514'
+);
+
 SELECT lives_ok(
     $$
         INSERT INTO public.media_assets (
@@ -298,6 +331,18 @@ SELECT lives_ok(
             JOIN public.webhook_events
                 ON webhook_events.id = clips.source_webhook_event_id
             WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+          );
+
+        UPDATE public.original_file_requests
+        SET status = 'uploading',
+            upload_started_at = NOW(),
+            upload_lease_id = '7ad85e44-af72-430c-a8ca-14db25b3e37e'
+        WHERE clip_id = (
+            SELECT clips.id
+            FROM public.clips
+            JOIN public.webhook_events
+                ON webhook_events.id = clips.source_webhook_event_id
+            WHERE webhook_events.external_event_id = 'pgtap-story-mention'
         );
 
         INSERT INTO public.media_assets (
@@ -326,6 +371,8 @@ SELECT lives_ok(
 
         UPDATE public.original_file_requests
         SET status = 'fulfilled',
+            upload_started_at = NULL,
+            upload_lease_id = NULL,
             fulfilled_at = NOW()
         WHERE clip_id = (
             SELECT clips.id
@@ -415,7 +462,7 @@ SELECT ok(
 
 SELECT ok(
     (
-        SELECT COUNT(*) = 5
+        SELECT COUNT(*) = 6
         FROM pg_indexes
         WHERE schemaname = 'public'
           AND indexname IN (
@@ -423,7 +470,8 @@ SELECT ok(
               'webhook_events_processing_started_at_idx',
               'media_assets_pending_next_attempt_idx',
               'media_assets_download_started_at_idx',
-              'original_file_requests_status_expires_at_idx'
+              'original_file_requests_status_expires_at_idx',
+              'original_file_requests_upload_started_at_idx'
           )
     ),
     'worker and monitoring indexes exist'

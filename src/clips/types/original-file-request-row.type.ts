@@ -2,6 +2,7 @@ export type OriginalFileRequestStatus =
   | 'pending'
   | 'sending'
   | 'sent'
+  | 'uploading'
   | 'fulfilled'
   | 'failed'
   | 'expired'
@@ -18,6 +19,8 @@ export interface OriginalFileRequestRow {
   last_error: string | null;
   sending_started_at: Date | null;
   sent_at: Date | null;
+  upload_started_at: Date | null;
+  upload_lease_id: string | null;
   fulfilled_at: Date | null;
   created_at: Date;
   updated_at: Date;

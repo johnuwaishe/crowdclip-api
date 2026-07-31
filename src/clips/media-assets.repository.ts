@@ -19,6 +19,14 @@ export interface StoreMediaAssetInput {
   byteSize: number;
 }
 
+export interface CreateStoredFanOriginalInput {
+  clipId: string;
+  storageBucket: string;
+  storagePath: string;
+  mimeType: string;
+  byteSize: number;
+}
+
 @Injectable()
 export class MediaAssetsRepository {
   constructor(private readonly databaseService: DatabaseService) {}
@@ -40,6 +48,66 @@ export class MediaAssetsRepository {
     );
 
     return result.rows[0] ?? null;
+  }
+
+  async createStoredFanOriginal(
+    input: CreateStoredFanOriginalInput,
+    executor: DatabaseExecutor,
+  ): Promise<MediaAssetRow> {
+    const insertResult = await executor.query<MediaAssetRow>(
+      `
+        INSERT INTO public.media_assets (
+          clip_id,
+          asset_type,
+          status,
+          storage_bucket,
+          storage_path,
+          mime_type,
+          byte_size,
+          stored_at
+        )
+        VALUES (
+          $1,
+          'fan_original',
+          'stored',
+          $2,
+          $3,
+          $4,
+          $5,
+          NOW()
+        )
+        ON CONFLICT (clip_id, asset_type)
+        DO NOTHING
+        RETURNING *
+      `,
+      [
+        input.clipId,
+        input.storageBucket,
+        input.storagePath,
+        input.mimeType,
+        input.byteSize,
+      ],
+    );
+
+    const insertedAsset = insertResult.rows[0];
+
+    if (insertedAsset) {
+      return insertedAsset;
+    }
+
+    const existingAsset = await this.findStoredByClipAndType(
+      input.clipId,
+      'fan_original',
+      executor,
+    );
+
+    if (!existingAsset) {
+      throw new Error(
+        'Fan-original media asset exists but is not in the stored state',
+      );
+    }
+
+    return existingAsset;
   }
 
   async findOrCreate(

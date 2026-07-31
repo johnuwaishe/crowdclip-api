@@ -275,6 +275,47 @@ describe('clip workflow repositories', () => {
       );
     });
 
+    it('creates a stored fan-original version in the same clip', async () => {
+      const fanOriginal: MediaAssetRow = {
+        ...asset,
+        id: 'fan-original-id',
+        asset_type: 'fan_original',
+        status: 'stored',
+        source_url: null,
+        storage_bucket: 'clip-media',
+        storage_path: 'clip-id/original/request-id.mp4',
+        mime_type: 'video/mp4',
+        byte_size: '4096',
+        stored_at: now,
+      };
+      query.mockResolvedValueOnce(queryResult([fanOriginal]));
+      const repository = new MediaAssetsRepository(databaseService);
+
+      await expect(
+        repository.createStoredFanOriginal(
+          {
+            clipId: 'clip-id',
+            storageBucket: 'clip-media',
+            storagePath: 'clip-id/original/request-id.mp4',
+            mimeType: 'video/mp4',
+            byteSize: 4096,
+          },
+          executor,
+        ),
+      ).resolves.toBe(fanOriginal);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("'fan_original'"),
+        [
+          'clip-id',
+          'clip-media',
+          'clip-id/original/request-id.mp4',
+          'video/mp4',
+          4096,
+        ],
+      );
+    });
+
     it('returns the existing media asset after an insert conflict', async () => {
       query
         .mockResolvedValueOnce(queryResult([]))
@@ -411,6 +452,8 @@ describe('clip workflow repositories', () => {
       last_error: null,
       sending_started_at: null,
       sent_at: null,
+      upload_started_at: null,
+      upload_lease_id: null,
       fulfilled_at: null,
       created_at: now,
       updated_at: now,
@@ -449,6 +492,95 @@ describe('clip workflow repositories', () => {
       expect(query).toHaveBeenCalledWith(
         expect.stringContaining('WHERE clip_id = $1'),
         ['clip-id'],
+      );
+    });
+
+    it('atomically claims an eligible request for upload', async () => {
+      const staleBefore = new Date('2026-07-29T16:55:00.000Z');
+      const uploadLeaseId = '7ad85e44-af72-430c-a8ca-14db25b3e37e';
+      const uploadingRequest: OriginalFileRequestRow = {
+        ...request,
+        status: 'uploading',
+        upload_started_at: now,
+        upload_lease_id: uploadLeaseId,
+      };
+      query.mockResolvedValueOnce(queryResult([uploadingRequest]));
+      const repository = new OriginalFileRequestsRepository(databaseService);
+
+      await expect(
+        repository.claimForUpload({
+          requestId: request.id,
+          uploadTokenHash: request.upload_token_hash,
+          uploadLeaseId,
+          staleBefore,
+        }),
+      ).resolves.toBe(uploadingRequest);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("SET status = 'uploading'"),
+        [request.id, request.upload_token_hash, uploadLeaseId, staleBefore],
+      );
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("status IN ('pending', 'sent', 'failed')"),
+        expect.any(Array),
+      );
+    });
+
+    it('releases a failed upload back to a retryable state', async () => {
+      const uploadLeaseId = '7ad85e44-af72-430c-a8ca-14db25b3e37e';
+      query.mockResolvedValueOnce(queryResult([request]));
+      const repository = new OriginalFileRequestsRepository(databaseService);
+
+      await expect(
+        repository.releaseUploadAfterFailure(
+          request.id,
+          uploadLeaseId,
+          'Storage unavailable',
+        ),
+      ).resolves.toBe(request);
+
+      expect(query).toHaveBeenCalledWith(
+        expect.stringContaining("WHEN sent_at IS NOT NULL THEN 'sent'"),
+        [request.id, uploadLeaseId, 'Storage unavailable'],
+      );
+    });
+
+    it('locks and fulfills a claimed upload request', async () => {
+      const uploadLeaseId = '7ad85e44-af72-430c-a8ca-14db25b3e37e';
+      const uploadingRequest: OriginalFileRequestRow = {
+        ...request,
+        status: 'uploading',
+        upload_started_at: now,
+        upload_lease_id: uploadLeaseId,
+      };
+      const fulfilledRequest: OriginalFileRequestRow = {
+        ...uploadingRequest,
+        status: 'fulfilled',
+        upload_started_at: null,
+        upload_lease_id: null,
+        fulfilled_at: now,
+      };
+      query
+        .mockResolvedValueOnce(queryResult([uploadingRequest]))
+        .mockResolvedValueOnce(queryResult([fulfilledRequest]));
+      const repository = new OriginalFileRequestsRepository(databaseService);
+
+      await expect(
+        repository.findByIdForUpdate(request.id, executor),
+      ).resolves.toBe(uploadingRequest);
+      await expect(
+        repository.markFulfilled(request.id, uploadLeaseId, executor),
+      ).resolves.toBe(fulfilledRequest);
+
+      expect(query).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('FOR UPDATE'),
+        [request.id],
+      );
+      expect(query).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining("AND status = 'uploading'"),
+        [request.id, uploadLeaseId],
       );
     });
   });
