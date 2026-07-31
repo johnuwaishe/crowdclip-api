@@ -1,0 +1,45 @@
+import {
+  Controller,
+  HttpCode,
+  Param,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  OriginalFileMultipartUpload,
+  OriginalFileUploadResult,
+  OriginalFileUploadsService,
+} from './original-file-uploads.service';
+import { OriginalFileUploadTokenGuard } from './original-file-upload-token.guard';
+
+const MAX_MULTIPART_FILE_BYTES = 50 * 1024 * 1024;
+
+@Controller('uploads/original')
+export class OriginalFileUploadsController {
+  constructor(
+    private readonly originalFileUploadsService: OriginalFileUploadsService,
+  ) {}
+
+  @Post(':token')
+  @HttpCode(200)
+  @UseGuards(OriginalFileUploadTokenGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        files: 1,
+        fields: 0,
+        parts: 2,
+        fileSize: MAX_MULTIPART_FILE_BYTES,
+      },
+    }),
+  )
+  upload(
+    @Param('token') token: string,
+    @UploadedFile() file: OriginalFileMultipartUpload | undefined,
+  ): Promise<OriginalFileUploadResult> {
+    return this.originalFileUploadsService.upload(token, file);
+  }
+}

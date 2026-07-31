@@ -4,12 +4,15 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 import { ClipsService } from './../src/clips/clips.service';
+import { OriginalFileUploadsService } from './../src/clips/original-file-uploads.service';
+import { OriginalFileUploadTokenGuard } from './../src/clips/original-file-upload-token.guard';
 import { DatabaseService } from './../src/database/database.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
   const listRecentForReview = jest.fn().mockResolvedValue([]);
   const decideMediaChoice = jest.fn();
+  const uploadOriginalFile = jest.fn();
   const query = jest.fn((sql: string) => {
     if (sql.includes('SELECT 1 AS connected')) {
       return Promise.resolve({ rows: [{ connected: 1 }] });
@@ -22,6 +25,7 @@ describe('AppController (e2e)', () => {
     query.mockClear();
     listRecentForReview.mockClear();
     decideMediaChoice.mockReset();
+    uploadOriginalFile.mockReset();
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
@@ -33,6 +37,14 @@ describe('AppController (e2e)', () => {
       .useValue({
         listRecentForReview,
         decideMediaChoice,
+      })
+      .overrideProvider(OriginalFileUploadsService)
+      .useValue({
+        upload: uploadOriginalFile,
+      })
+      .overrideGuard(OriginalFileUploadTokenGuard)
+      .useValue({
+        canActivate: () => true,
       })
       .compile();
 
@@ -90,6 +102,41 @@ describe('AppController (e2e)', () => {
       .patch('/clips/8ad85e44-af72-430c-a8ca-14db25b3e37e/media-choice')
       .send({ mediaChoice: 'undecided' })
       .expect(400);
+  });
+
+  it('/uploads/original/:token accepts a fan-original file (POST)', () => {
+    uploadOriginalFile.mockResolvedValueOnce({
+      requestId: 'request-id',
+      clipId: 'clip-id',
+      status: 'fulfilled',
+      mediaAsset: {
+        id: 'asset-id',
+        type: 'fan_original',
+        mimeType: 'video/mp4',
+        byteSize: 3,
+        storedAt: new Date('2026-07-30T17:00:00.000Z'),
+      },
+    });
+
+    return request(app.getHttpServer())
+      .post('/uploads/original/signed-token')
+      .attach('file', Buffer.from([1, 2, 3]), {
+        filename: 'concert.mp4',
+        contentType: 'video/mp4',
+      })
+      .expect(200)
+      .expect({
+        requestId: 'request-id',
+        clipId: 'clip-id',
+        status: 'fulfilled',
+        mediaAsset: {
+          id: 'asset-id',
+          type: 'fan_original',
+          mimeType: 'video/mp4',
+          byteSize: 3,
+          storedAt: '2026-07-30T17:00:00.000Z',
+        },
+      });
   });
 
   afterEach(async () => {

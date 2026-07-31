@@ -7,10 +7,13 @@ import { ClipsService } from './clips.service';
 import { MediaAssetsRepository } from './media-assets.repository';
 import { OriginalFileRequestsRepository } from './original-file-requests.repository';
 import { OriginalFileUploadTokenService } from './original-file-upload-token.service';
+import { OriginalFileUploadsController } from './original-file-uploads.controller';
+import { OriginalFileUploadsService } from './original-file-uploads.service';
+import { OriginalFileUploadTokenGuard } from './original-file-upload-token.guard';
 
 @Module({
   imports: [MediaStorageModule],
-  controllers: [ClipsController],
+  controllers: [ClipsController, OriginalFileUploadsController],
   providers: [
     FansRepository,
     ClipsRepository,
@@ -18,6 +21,8 @@ import { OriginalFileUploadTokenService } from './original-file-upload-token.ser
     MediaAssetsRepository,
     OriginalFileRequestsRepository,
     OriginalFileUploadTokenService,
+    OriginalFileUploadsService,
+    OriginalFileUploadTokenGuard,
   ],
   exports: [FansRepository, ClipsRepository, MediaAssetsRepository],
 })
