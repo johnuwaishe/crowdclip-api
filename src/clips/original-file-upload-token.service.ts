@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createHash, createHmac, randomUUID } from 'node:crypto';
+import {
+  createHash,
+  createHmac,
+  randomUUID,
+  timingSafeEqual,
+} from 'node:crypto';
 
 export interface OriginalFileUploadToken {
   requestId: string;
@@ -26,6 +31,44 @@ export class OriginalFileUploadTokenService {
 
   recreate(requestId: string, expiresAt: Date): OriginalFileUploadToken {
     return this.create(requestId, expiresAt);
+  }
+
+  verify(rawToken: string): OriginalFileUploadToken | null {
+    if (rawToken.length > 512) {
+      return null;
+    }
+
+    const parts = rawToken.split('.');
+
+    if (
+      parts.length !== 3 ||
+      !this.isUuid(parts[0]) ||
+      !/^[a-z0-9]+$/.test(parts[1])
+    ) {
+      return null;
+    }
+
+    const expiresAtMs = Number.parseInt(parts[1], 36);
+
+    if (
+      !Number.isSafeInteger(expiresAtMs) ||
+      expiresAtMs <= 0 ||
+      expiresAtMs.toString(36) !== parts[1]
+    ) {
+      return null;
+    }
+
+    const expected = this.create(parts[0], new Date(expiresAtMs));
+
+    if (!this.safeEqual(rawToken, expected.rawToken)) {
+      return null;
+    }
+
+    return expected;
+  }
+
+  matchesHash(tokenHash: string, storedHash: string): boolean {
+    return this.safeEqual(tokenHash, storedHash);
   }
 
   private create(requestId: string, expiresAt: Date): OriginalFileUploadToken {
@@ -54,5 +97,21 @@ export class OriginalFileUploadTokenService {
     }
 
     return secret;
+  }
+
+  private safeEqual(left: string, right: string): boolean {
+    const leftBuffer = Buffer.from(left, 'utf8');
+    const rightBuffer = Buffer.from(right, 'utf8');
+
+    return (
+      leftBuffer.length === rightBuffer.length &&
+      timingSafeEqual(leftBuffer, rightBuffer)
+    );
+  }
+
+  private isUuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value,
+    );
   }
 }

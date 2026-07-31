@@ -45,6 +45,27 @@ describe('OriginalFileUploadTokenService', () => {
     );
   });
 
+  it('verifies a signed token and rejects tampering', () => {
+    const service = new OriginalFileUploadTokenService(configService);
+    const issued = service.issue(604_800);
+
+    expect(service.verify(issued.rawToken)).toEqual(issued);
+    expect(service.matchesHash(issued.tokenHash, issued.tokenHash)).toBe(true);
+    expect(service.verify(`${issued.rawToken}tampered`)).toBeNull();
+    expect(service.matchesHash(issued.tokenHash, 'b'.repeat(64))).toBe(false);
+  });
+
+  it.each([
+    '',
+    'not-a-token',
+    '00000000-0000-0000-0000-000000000000.expiry.signature',
+    `${'a'.repeat(513)}`,
+  ])('rejects malformed token %s', (rawToken) => {
+    const service = new OriginalFileUploadTokenService(configService);
+
+    expect(service.verify(rawToken)).toBeNull();
+  });
+
   it('rejects a secret shorter than 32 bytes', () => {
     const shortConfig = {
       getOrThrow: jest.fn().mockReturnValue('too-short'),
