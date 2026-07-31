@@ -1,0 +1,3206 @@
+{
+  "queries": [
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "moore_5s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "moore_10s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "moore_15s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "moore_30s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": true,
+      "source": "moore",
+      "sourceId": "cornell-moore-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "petrunis_5s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "petrunis_10s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "petrunis_15s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "petrunis_30s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "petrunis",
+      "sourceId": "cornell-petrunis-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "stevenson_5s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "stevenson_10s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "stevenson_15s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_30s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_30s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_30s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_30s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_30s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_60s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_60s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_60s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_60s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_60s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_120s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_120s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_120s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_120s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_120s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_180s_clean.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_180s_aac64.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_180s_phone_filter.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_180s_low_level.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "stevenson_30s_at_180s_combined.wav",
+      "samePerformance": true,
+      "sameRecording": false,
+      "source": "stevenson",
+      "sourceId": "cornell-stevenson-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_30s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_30s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_30s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_30s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_30s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_60s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_60s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_60s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_60s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_60s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_120s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_120s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_120s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_120s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_120s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_180s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_180s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_180s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_180s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 5,
+      "filename": "sportatorium_5s_at_180s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_30s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_30s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_30s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_30s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_30s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_60s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_60s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_60s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_60s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_60s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_120s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_120s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_120s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_120s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_120s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_180s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_180s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_180s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_180s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 10,
+      "filename": "sportatorium_10s_at_180s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_30s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_30s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_30s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_30s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_30s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_60s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_60s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_60s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_60s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_60s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_120s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_120s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_120s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_120s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_120s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_180s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_180s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_180s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_180s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 15,
+      "filename": "sportatorium_15s_at_180s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_30s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_30s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_30s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_30s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_30s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 30,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_60s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_60s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_60s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_60s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_60s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 60,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_120s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_120s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_120s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_120s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_120s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 120,
+      "transformation": "combined"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_180s_clean.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "clean"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_180s_aac64.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "aac64"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_180s_phone_filter.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "phone_filter"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_180s_low_level.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "low_level"
+    },
+    {
+      "durationSeconds": 30,
+      "filename": "sportatorium_30s_at_180s_combined.wav",
+      "samePerformance": false,
+      "sameRecording": false,
+      "source": "sportatorium",
+      "sourceId": "sportatorium-1977-brown-eyed-women",
+      "startSeconds": 180,
+      "transformation": "combined"
+    }
+  ],
+  "reference": "moore_reference.wav",
+  "sampleRate": 11025
+}

@@ -1,0 +1,8 @@
+{
+  "description": "Reuses the preserved audfprint spike corpus without copying media.",
+  "manifest": "../audfprint-feasibility/fixtures-manifest.json",
+  "queries": "../audfprint-feasibility/fixtures/queries/queries.json",
+  "reference": "../audfprint-feasibility/fixtures/reference/moore_reference.wav",
+  "generatedQueriesDirectory": "../audfprint-feasibility/fixtures/queries",
+  "audfprintReport": "../audfprint-feasibility/results/REPORT.md"
+}

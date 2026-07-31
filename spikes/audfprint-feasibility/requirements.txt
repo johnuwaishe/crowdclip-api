@@ -1,0 +1,9 @@
+# audfprint's official requirements, pinned for a reproducible Python 3.11
+# environment. NumPy stays below 2 because audfprint currently calls
+# numpy.asfarray, which NumPy 2 removed.
+numpy==1.26.4
+scipy==1.14.1
+docopt==0.6.2
+joblib==1.4.2
+psutil==6.1.1
+

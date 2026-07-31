@@ -1,0 +1,152 @@
+{
+  "audfprintCommit": "cb03ba99feafd41b8874307f0f4e808a6ce34362",
+  "audfprintScoreMeaning": "Number of consistently time-aligned landmark hashes; this is a raw count, not a normalized confidence probability.",
+  "conclusion": "NO-GO",
+  "crossRecordingByTransformation": {
+    "aac64": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 32
+    },
+    "clean": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 32
+    },
+    "combined": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 32
+    },
+    "low_level": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 32
+    },
+    "phone_filter": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 32
+    }
+  },
+  "crossRecordingCleanByDuration": {
+    "10": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 8
+    },
+    "15": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 8
+    },
+    "30": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 8
+    },
+    "5": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 8
+    }
+  },
+  "groups": {
+    "A_same_source_baseline": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "A_same_source_degraded": {
+      "matchRate": 1.0,
+      "matches": 64,
+      "queries": 64
+    },
+    "B_cross_recording_clean": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 32
+    },
+    "C_cross_recording_degraded": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 128
+    },
+    "D_different_performance": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 80
+    },
+    "E_mp4_extraction": {
+      "matchRate": 0.5,
+      "matches": 4,
+      "queries": 8
+    }
+  },
+  "mp4BySource": {
+    "crossRecording": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 4
+    },
+    "sameRecording": {
+      "matchRate": 1.0,
+      "matches": 4,
+      "queries": 4
+    }
+  },
+  "reference": "cornell-moore-1977-brown-eyed-women",
+  "sameRecordingByTransformation": {
+    "aac64": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "clean": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "combined": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "low_level": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "phone_filter": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    }
+  },
+  "song": "Brown Eyed Women",
+  "status": "complete",
+  "thresholds": {
+    "baselineAbsoluteOffsetComparisons": 16,
+    "baselineMaximumAbsoluteOffsetErrorSeconds": 0.0,
+    "baselineMedianAbsoluteOffsetErrorSeconds": 0.0,
+    "clean10To30": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 24
+    },
+    "degraded15To30": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 64
+    },
+    "medianAbsoluteRelativeOffsetErrorSeconds": null,
+    "negativeControlClean": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 16
+    },
+    "relativeOffsetComparisons": 0,
+    "relativeOffsetsWithinTwoSecondsRate": null
+  },
+  "totalQueries": 328
+}

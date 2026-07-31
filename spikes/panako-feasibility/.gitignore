@@ -1,0 +1,17 @@
+.vendor/
+.panako-db/
+__pycache__/
+*.py[cod]
+
+# This spike reuses the ignored media in ../audfprint-feasibility.
+# Never add copied audio or video fixtures here.
+fixtures/
+*.aac
+*.flac
+*.m4a
+*.mp3
+*.mp4
+*.ogg
+*.opus
+*.wav
+*.webm

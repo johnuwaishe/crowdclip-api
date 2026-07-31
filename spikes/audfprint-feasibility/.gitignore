@@ -1,0 +1,23 @@
+.venv/
+.vendor/
+__pycache__/
+*.py[cod]
+
+# Downloaded and generated media must never be committed.
+fixtures/**/*.aac
+fixtures/**/*.flac
+fixtures/**/*.m4a
+fixtures/**/*.mp3
+fixtures/**/*.mp4
+fixtures/**/*.ogg
+fixtures/**/*.opus
+fixtures/**/*.wav
+fixtures/**/*.webm
+fixtures/**/*.part
+
+# Generated fingerprint databases are binary fixtures.
+fixtures/**/*.fpdb
+fixtures/**/*.fpdb.*
+fixtures/**/*.pkl
+fixtures/**/*.pklz
+
