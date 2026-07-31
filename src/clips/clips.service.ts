@@ -210,6 +210,8 @@ export class ClipsService {
       },
       transaction,
     );
+    // TODO: Send the upload link to the fan through the Instagram Messaging
+    // API once the required Meta permissions and Pro delivery flow are ready.
     const uploadPath = this.createUploadPath(token.rawToken);
 
     return this.createDecisionResult(updatedClip, request, uploadPath);
