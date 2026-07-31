@@ -74,6 +74,26 @@ describe('RemoteMediaDownloader', () => {
     ).rejects.toThrow('Downloaded media has an unsupported content type');
   });
 
+  it('preserves provider media types outside the preferred extension map', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(new Uint8Array([1]).buffer, {
+        status: 200,
+        headers: {
+          'content-type': 'image/gif',
+        },
+      }),
+    );
+
+    const downloader = new RemoteMediaDownloader(config);
+
+    await expect(
+      downloader.download('https://cdn.example.test/story.gif'),
+    ).resolves.toMatchObject({
+      mimeType: 'image/gif',
+      extension: 'media',
+    });
+  });
+
   it('enforces the size limit while streaming the response', async () => {
     fetchMock.mockResolvedValueOnce(
       new Response(new Uint8Array(11).buffer, {

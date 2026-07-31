@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MediaDownloadConfig } from './media-download.config';
+import { normalizeSupportedMediaType } from './media-file-type';
 
 const MAX_REDIRECTS = 3;
 
@@ -32,15 +33,15 @@ export class RemoteMediaDownloader {
         throw new Error(`Media download returned HTTP ${response.status}`);
       }
 
-      const mimeType = this.getAllowedMimeType(response);
+      const mediaType = this.getAllowedMediaType(response);
       this.validateContentLength(response);
       const data = await this.readBoundedBody(response);
 
       return {
         data,
-        mimeType,
+        mimeType: mediaType.mimeType,
         byteSize: data.byteLength,
-        extension: this.getExtension(mimeType),
+        extension: mediaType.extension,
       };
     } catch (error) {
       if (controller.signal.aborted) {
@@ -105,7 +106,10 @@ export class RemoteMediaDownloader {
     return url;
   }
 
-  private getAllowedMimeType(response: Response): string {
+  private getAllowedMediaType(response: Response): {
+    mimeType: string;
+    extension: string;
+  } {
     const contentType = response.headers.get('content-type');
     const mimeType = contentType?.split(';', 1)[0].trim().toLowerCase();
 
@@ -116,7 +120,12 @@ export class RemoteMediaDownloader {
       throw new Error('Downloaded media has an unsupported content type');
     }
 
-    return mimeType;
+    return (
+      normalizeSupportedMediaType(mimeType) ?? {
+        mimeType,
+        extension: 'media',
+      }
+    );
   }
 
   private validateContentLength(response: Response): void {
@@ -172,19 +181,5 @@ export class RemoteMediaDownloader {
     }
 
     return Buffer.concat(chunks, byteSize);
-  }
-
-  private getExtension(mimeType: string): string {
-    const extensions: Record<string, string> = {
-      'image/heic': 'heic',
-      'image/jpeg': 'jpg',
-      'image/png': 'png',
-      'image/webp': 'webp',
-      'video/mp4': 'mp4',
-      'video/quicktime': 'mov',
-      'video/webm': 'webm',
-    };
-
-    return extensions[mimeType] ?? 'media';
   }
 }
