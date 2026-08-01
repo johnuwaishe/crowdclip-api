@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 
 SET LOCAL search_path = public, extensions;
 
-SELECT plan(32);
+SELECT plan(48);
 
 SELECT has_table('public', 'fans', 'fans table exists');
 SELECT has_table('public', 'clips', 'clips table exists');
@@ -13,6 +13,21 @@ SELECT has_table(
     'public',
     'original_file_requests',
     'original_file_requests table exists'
+);
+SELECT has_table(
+    'public',
+    'audio_reference_catalogues',
+    'audio reference catalogues table exists'
+);
+SELECT has_table(
+    'public',
+    'audio_reference_tracks',
+    'audio reference tracks table exists'
+);
+SELECT has_table(
+    'public',
+    'clip_audio_analyses',
+    'clip audio analyses table exists'
 );
 SELECT has_column(
     'public',
@@ -38,6 +53,24 @@ SELECT has_trigger(
     'webhook_events',
     'set_webhook_events_updated_at',
     'webhook_events maintains updated_at'
+);
+SELECT has_trigger(
+    'public',
+    'audio_reference_catalogues',
+    'set_audio_reference_catalogues_updated_at',
+    'audio reference catalogues maintain updated_at'
+);
+SELECT has_trigger(
+    'public',
+    'audio_reference_tracks',
+    'set_audio_reference_tracks_updated_at',
+    'audio reference tracks maintain updated_at'
+);
+SELECT has_trigger(
+    'public',
+    'clip_audio_analyses',
+    'set_clip_audio_analyses_updated_at',
+    'clip audio analyses maintain updated_at'
 );
 SELECT has_trigger(
     'public',
@@ -69,6 +102,22 @@ SELECT col_is_unique(
     'fans',
     'instagram_scoped_user_id',
     'a fan Instagram ID is unique'
+);
+SELECT col_is_unique(
+    'public',
+    'clip_audio_analyses',
+    ARRAY['clip_id', 'catalogue_id', 'provider'],
+    'one provider has one analysis lifecycle per clip and catalogue'
+);
+
+SELECT ok(
+    EXISTS (
+        SELECT 1
+        FROM pg_indexes
+        WHERE schemaname = 'public'
+          AND indexname = 'audio_reference_catalogues_active_recipient_key'
+    ),
+    'an Instagram recipient has at most one active catalogue'
 );
 SELECT col_is_unique(
     'public',
@@ -428,6 +477,197 @@ SELECT is(
     'the source webhook event is processed'
 );
 
+INSERT INTO public.audio_reference_catalogues (
+    instagram_recipient_id,
+    name
+)
+VALUES (
+    'pgtap-artist',
+    'Cornell reference catalogue'
+);
+
+SELECT throws_ok(
+    $$
+        INSERT INTO public.audio_reference_catalogues (
+            instagram_recipient_id,
+            name
+        )
+        VALUES (
+            'pgtap-artist',
+            'Duplicate active catalogue'
+        )
+    $$,
+    '23505'
+);
+
+SELECT throws_ok(
+    $$
+        INSERT INTO public.audio_reference_tracks (
+            catalogue_id,
+            title,
+            status
+        )
+        SELECT id, 'Incomplete reference', 'ready'
+        FROM public.audio_reference_catalogues
+        WHERE instagram_recipient_id = 'pgtap-artist'
+          AND status = 'active'
+    $$,
+    '23514'
+);
+
+INSERT INTO public.audio_reference_tracks (
+    catalogue_id,
+    title,
+    artist_name,
+    status,
+    storage_bucket,
+    storage_path,
+    mime_type,
+    byte_size,
+    uploaded_at
+)
+SELECT
+    id,
+    'Brown Eyed Women',
+    'Grateful Dead',
+    'ready',
+    'audio-references',
+    id::TEXT || '/references/brown-eyed-women.mp3',
+    'audio/mpeg',
+    1024,
+    NOW()
+FROM public.audio_reference_catalogues
+WHERE instagram_recipient_id = 'pgtap-artist'
+  AND status = 'active';
+
+SELECT throws_ok(
+    $$
+        INSERT INTO public.clip_audio_analyses (
+            clip_id,
+            media_asset_id,
+            catalogue_id,
+            status
+        )
+        SELECT
+            clips.id,
+            media_assets.id,
+            audio_reference_catalogues.id,
+            'processing'
+        FROM public.clips
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        JOIN public.media_assets
+            ON media_assets.clip_id = clips.id
+        JOIN public.audio_reference_catalogues
+            ON audio_reference_catalogues.instagram_recipient_id = webhook_events.recipient_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        ORDER BY (media_assets.asset_type = 'fan_original') DESC
+        LIMIT 1
+    $$,
+    '23514'
+);
+
+SELECT lives_ok(
+    $$
+        INSERT INTO public.clip_audio_analyses (
+            clip_id,
+            media_asset_id,
+            catalogue_id
+        )
+        SELECT
+            clips.id,
+            media_assets.id,
+            audio_reference_catalogues.id
+        FROM public.clips
+        JOIN public.webhook_events
+            ON webhook_events.id = clips.source_webhook_event_id
+        JOIN public.media_assets
+            ON media_assets.clip_id = clips.id
+        JOIN public.audio_reference_catalogues
+            ON audio_reference_catalogues.instagram_recipient_id = webhook_events.recipient_id
+        WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        ORDER BY (media_assets.asset_type = 'fan_original') DESC
+        LIMIT 1;
+
+        UPDATE public.clip_audio_analyses
+        SET status = 'processing',
+            attempt_count = attempt_count + 1,
+            processing_started_at = NOW()
+        WHERE clip_id = (
+            SELECT clips.id
+            FROM public.clips
+            JOIN public.webhook_events
+                ON webhook_events.id = clips.source_webhook_event_id
+            WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        );
+
+        UPDATE public.clip_audio_analyses
+        SET status = 'matched',
+            matched_reference_track_id = (
+                SELECT audio_reference_tracks.id
+                FROM public.audio_reference_tracks
+                JOIN public.audio_reference_catalogues
+                    ON audio_reference_catalogues.id = audio_reference_tracks.catalogue_id
+                WHERE audio_reference_catalogues.instagram_recipient_id = 'pgtap-artist'
+                  AND audio_reference_catalogues.status = 'active'
+                  AND audio_reference_tracks.title = 'Brown Eyed Women'
+            ),
+            fingerprint_similarity = 0.62,
+            second_best_similarity = 0.56,
+            peak_margin = 0.06,
+            time_scale = 0.995,
+            reference_offset_ms = 88576,
+            matched_duration_ms = 15000,
+            processing_started_at = NULL,
+            completed_at = NOW()
+        WHERE clip_id = (
+            SELECT clips.id
+            FROM public.clips
+            JOIN public.webhook_events
+                ON webhook_events.id = clips.source_webhook_event_id
+            WHERE webhook_events.external_event_id = 'pgtap-story-mention'
+        );
+    $$,
+    'the uploaded reference and stored fan video can produce a match'
+);
+
+SELECT throws_ok(
+    $$
+        INSERT INTO public.clip_audio_analyses (
+            clip_id,
+            media_asset_id,
+            catalogue_id,
+            provider
+        )
+        SELECT
+            clip_audio_analyses.clip_id,
+            clip_audio_analyses.media_asset_id,
+            clip_audio_analyses.catalogue_id,
+            clip_audio_analyses.provider
+        FROM public.clip_audio_analyses
+        JOIN public.audio_reference_catalogues
+            ON audio_reference_catalogues.id = clip_audio_analyses.catalogue_id
+        WHERE audio_reference_catalogues.instagram_recipient_id = 'pgtap-artist'
+          AND audio_reference_catalogues.status = 'active'
+        LIMIT 1
+    $$,
+    '23505'
+);
+
+SELECT is(
+    (
+        SELECT clip_audio_analyses.status
+        FROM public.clip_audio_analyses
+        JOIN public.audio_reference_catalogues
+            ON audio_reference_catalogues.id = clip_audio_analyses.catalogue_id
+        WHERE audio_reference_catalogues.instagram_recipient_id = 'pgtap-artist'
+          AND audio_reference_catalogues.status = 'active'
+        LIMIT 1
+    ),
+    'matched',
+    'the completed audio match is stored'
+);
+
 UPDATE public.fans
 SET instagram_scoped_user_id = instagram_scoped_user_id
 WHERE instagram_scoped_user_id = 'pgtap-fan';
@@ -443,7 +683,7 @@ SELECT ok(
 
 SELECT ok(
     (
-        SELECT COUNT(*) = 5
+        SELECT COUNT(*) = 8
             AND BOOL_AND(relrowsecurity)
         FROM pg_class
         JOIN pg_namespace
@@ -454,7 +694,10 @@ SELECT ok(
               'fans',
               'clips',
               'media_assets',
-              'original_file_requests'
+              'original_file_requests',
+              'audio_reference_catalogues',
+              'audio_reference_tracks',
+              'clip_audio_analyses'
           )
     ),
     'RLS is enabled on every application table'
@@ -479,6 +722,20 @@ SELECT ok(
 
 SELECT ok(
     (
+        SELECT COUNT(*) = 3
+        FROM pg_indexes
+        WHERE schemaname = 'public'
+          AND indexname IN (
+              'clip_audio_analyses_queue_idx',
+              'clip_audio_analyses_processing_started_at_idx',
+              'clip_audio_analyses_match_grouping_idx'
+          )
+    ),
+    'audio analysis queue and grouping indexes exist'
+);
+
+SELECT ok(
+    (
         SELECT NOT public
             AND file_size_limit = 52428800
             AND allowed_mime_types @> ARRAY['image/*', 'video/*']
@@ -486,6 +743,17 @@ SELECT ok(
         WHERE id = 'clip-media'
     ),
     'clip media bucket is private and restricted'
+);
+
+SELECT ok(
+    (
+        SELECT NOT public
+            AND file_size_limit = 104857600
+            AND allowed_mime_types @> ARRAY['audio/*']
+        FROM storage.buckets
+        WHERE id = 'audio-references'
+    ),
+    'audio reference bucket is private and restricted to audio'
 );
 
 SELECT * FROM finish();
