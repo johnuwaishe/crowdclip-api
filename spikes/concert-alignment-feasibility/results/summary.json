@@ -1,0 +1,117 @@
+{
+  "algorithm": "hk2002-affine-alignment",
+  "conclusion": "GO",
+  "crossRecordingByTransformation": {
+    "aac64": {
+      "matchRate": 0.9375,
+      "matches": 15,
+      "queries": 16
+    },
+    "clean": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "combined": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "low_level": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "phone_filter": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    }
+  },
+  "crossRecordingCleanByDuration": {
+    "10": {
+      "matchRate": 1.0,
+      "matches": 4,
+      "queries": 4
+    },
+    "15": {
+      "matchRate": 1.0,
+      "matches": 4,
+      "queries": 4
+    },
+    "30": {
+      "matchRate": 1.0,
+      "matches": 4,
+      "queries": 4
+    },
+    "5": {
+      "matchRate": 1.0,
+      "matches": 4,
+      "queries": 4
+    }
+  },
+  "groups": {
+    "A_same_recording_clean": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "A_same_recording_degraded": {
+      "matchRate": 1.0,
+      "matches": 64,
+      "queries": 64
+    },
+    "B_cross_recording_clean": {
+      "matchRate": 1.0,
+      "matches": 16,
+      "queries": 16
+    },
+    "C_cross_recording_degraded": {
+      "matchRate": 0.984375,
+      "matches": 63,
+      "queries": 64
+    },
+    "D_different_performance": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 80
+    },
+    "E_mp4_cross_recording": {
+      "matchRate": 1.0,
+      "matches": 4,
+      "queries": 4
+    }
+  },
+  "matchGate": {
+    "maximumTimeScale": 1.05,
+    "minimumFingerprintSimilarity": 0.59,
+    "minimumPeakMargin": 0.02,
+    "minimumTimeScale": 0.95,
+    "note": "Pilot-derived feasibility gate, not a calibrated probability."
+  },
+  "reference": "cornell-stevenson-1977-brown-eyed-women",
+  "song": "Brown Eyed Women",
+  "status": "complete",
+  "thresholds": {
+    "clean10To30": {
+      "matchRate": 1.0,
+      "matches": 12,
+      "queries": 12
+    },
+    "degraded15To30": {
+      "matchRate": 1.0,
+      "matches": 32,
+      "queries": 32
+    },
+    "maximumAbsoluteRelativeOffsetErrorSeconds": 0.5984,
+    "medianAbsoluteRelativeOffsetErrorSeconds": 0.09920000000000001,
+    "negativeControlClean": {
+      "matchRate": 0.0,
+      "matches": 0,
+      "queries": 16
+    },
+    "relativeOffsetComparisons": 60,
+    "relativeOffsetsWithinTwoSecondsRate": 1.0
+  },
+  "totalQueries": 244
+}

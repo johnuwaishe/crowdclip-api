@@ -1,3 +1,17 @@
 {
-  "status": "not_run"
+  "status": "screened_out",
+  "panakoCommit": "e4b0e1dbb55e340bc66c90bac0ceb82b2cf84211",
+  "strategy": "PANAKO",
+  "sameRecordingSanityCheck": "matched",
+  "stevensonReferencePetrunisCleanQueries": {
+    "queries": 16,
+    "matches": 0,
+    "durationsSeconds": [5, 10, 15, 30]
+  },
+  "differentPerformanceCleanQueries": {
+    "queries": 12,
+    "matches": 0,
+    "durationsSeconds": [10, 15, 30]
+  },
+  "decision": "Do not run the full degradation matrix; advance to sequence alignment."
 }

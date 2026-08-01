@@ -1,0 +1,15 @@
+{
+  "status": "screened_out",
+  "aurioCommit": "34889caac74a626be31375f76a1ae3f2a2daa80d",
+  "algorithm": "HaitsmaKalker2002.FingerprintStore",
+  "sameRecordingSanityCheck": "matched",
+  "stevensonReferencePetrunis30SecondQueries": {
+    "queries": 4,
+    "matches": 0
+  },
+  "differentPerformanceQueries": {
+    "queries": 1,
+    "matches": 0
+  },
+  "decision": "The standalone store is insufficient; use explicit sequence alignment."
+}

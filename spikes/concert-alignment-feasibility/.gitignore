@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.py[cod]
+
+# Reuse the preserved corpus; never copy media into this spike.
+fixtures/
+*.aac
+*.flac
+*.m4a
+*.mp3
+*.mp4
+*.ogg
+*.opus
+*.wav
+*.webm

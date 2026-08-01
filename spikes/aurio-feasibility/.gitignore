@@ -1,0 +1,16 @@
+.vendor/
+bin/
+obj/
+results/*.tmp
+
+# This spike reuses the preserved WAV fixtures by path.
+fixtures/
+*.aac
+*.flac
+*.m4a
+*.mp3
+*.mp4
+*.ogg
+*.opus
+*.wav
+*.webm
