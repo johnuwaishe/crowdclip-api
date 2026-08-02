@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ClipAudioAnalysesRepository } from '../audio-analysis/clip-audio-analyses.repository';
 import { MediaAssetsRepository } from '../clips/media-assets.repository';
+import { DatabaseService } from '../database/database.service';
 import { MediaDownloadConfig } from './media-download.config';
 import { RemoteMediaDownloader } from './remote-media-downloader.service';
 import { SupabaseObjectStorage } from './supabase-object-storage.service';
@@ -25,7 +27,9 @@ export class MediaDownloadProcessor {
 
   constructor(
     private readonly config: MediaDownloadConfig,
+    private readonly databaseService: DatabaseService,
     private readonly mediaAssetsRepository: MediaAssetsRepository,
+    private readonly analysesRepository: ClipAudioAnalysesRepository,
     private readonly downloader: RemoteMediaDownloader,
     private readonly objectStorage: SupabaseObjectStorage,
   ) {}
@@ -53,13 +57,29 @@ export class MediaDownloadProcessor {
         contentType: downloaded.mimeType,
       });
 
-      const storedAsset = await this.mediaAssetsRepository.markStored({
-        id: mediaAsset.id,
-        storageBucket: this.config.storageBucket,
-        storagePath,
-        mimeType: downloaded.mimeType,
-        byteSize: downloaded.byteSize,
-      });
+      const storedAsset = await this.databaseService.withTransaction(
+        async (transaction) => {
+          const stored = await this.mediaAssetsRepository.markStored(
+            {
+              id: mediaAsset.id,
+              storageBucket: this.config.storageBucket,
+              storagePath,
+              mimeType: downloaded.mimeType,
+              byteSize: downloaded.byteSize,
+            },
+            transaction,
+          );
+
+          if (stored) {
+            await this.analysesRepository.enqueueForStoredMediaAsset(
+              stored.id,
+              transaction,
+            );
+          }
+
+          return stored;
+        },
+      );
 
       if (!storedAsset) {
         throw new Error(

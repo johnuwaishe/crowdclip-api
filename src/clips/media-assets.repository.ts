@@ -185,8 +185,11 @@ export class MediaAssetsRepository {
     return result.rows[0] ?? null;
   }
 
-  async markStored(input: StoreMediaAssetInput): Promise<MediaAssetRow | null> {
-    const result = await this.databaseService.query<MediaAssetRow>(
+  async markStored(
+    input: StoreMediaAssetInput,
+    executor: DatabaseExecutor = this.databaseService,
+  ): Promise<MediaAssetRow | null> {
+    const result = await executor.query<MediaAssetRow>(
       `
         UPDATE public.media_assets
         SET status = 'stored',

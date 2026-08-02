@@ -1,6 +1,11 @@
 import { Logger } from '@nestjs/common';
+import { ClipAudioAnalysesRepository } from '../audio-analysis/clip-audio-analyses.repository';
 import { MediaAssetsRepository } from '../clips/media-assets.repository';
 import { MediaAssetRow } from '../clips/types/media-asset-row.type';
+import {
+  DatabaseExecutor,
+  DatabaseService,
+} from '../database/database.service';
 import { MediaDownloadConfig } from './media-download.config';
 import { MediaDownloadProcessor } from './media-download.processor';
 import { RemoteMediaDownloader } from './remote-media-downloader.service';
@@ -37,6 +42,18 @@ describe('MediaDownloadProcessor', () => {
     markStored: jest.fn(),
     releaseAfterFailure: jest.fn(),
   };
+  const transaction = {
+    query: jest.fn(),
+  } as unknown as DatabaseExecutor;
+  const databaseService = {
+    withTransaction: jest.fn(
+      (callback: (executor: DatabaseExecutor) => Promise<unknown>) =>
+        callback(transaction),
+    ),
+  } as unknown as DatabaseService;
+  const analysesRepository = {
+    enqueueForStoredMediaAsset: jest.fn(),
+  };
   const downloader = {
     download: jest.fn(),
   };
@@ -54,7 +71,9 @@ describe('MediaDownloadProcessor', () => {
     loggerError = jest.spyOn(Logger.prototype, 'error').mockImplementation();
     processor = new MediaDownloadProcessor(
       config,
+      databaseService,
       mediaAssetsRepository as unknown as MediaAssetsRepository,
+      analysesRepository as unknown as ClipAudioAnalysesRepository,
       downloader as unknown as RemoteMediaDownloader,
       objectStorage as unknown as SupabaseObjectStorage,
     );
@@ -103,13 +122,20 @@ describe('MediaDownloadProcessor', () => {
       data,
       contentType: 'video/mp4',
     });
-    expect(mediaAssetsRepository.markStored).toHaveBeenCalledWith({
-      id: asset.id,
-      storageBucket: 'clip-media',
-      storagePath: 'clip-id/instagram/asset-id.mp4',
-      mimeType: 'video/mp4',
-      byteSize: 3,
-    });
+    expect(mediaAssetsRepository.markStored).toHaveBeenCalledWith(
+      {
+        id: asset.id,
+        storageBucket: 'clip-media',
+        storagePath: 'clip-id/instagram/asset-id.mp4',
+        mimeType: 'video/mp4',
+        byteSize: 3,
+      },
+      transaction,
+    );
+    expect(analysesRepository.enqueueForStoredMediaAsset).toHaveBeenCalledWith(
+      asset.id,
+      transaction,
+    );
   });
 
   it.each([
