@@ -9,6 +9,7 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import { ClipAudioAnalysesRepository } from '../audio-analysis/clip-audio-analyses.repository';
 import { DatabaseService } from '../database/database.service';
 import { MediaDownloadConfig } from '../media/media-download.config';
 import { normalizeSupportedMediaType } from '../media/media-file-type';
@@ -52,6 +53,7 @@ export class OriginalFileUploadsService {
     private readonly tokenService: OriginalFileUploadTokenService,
     private readonly requestsRepository: OriginalFileRequestsRepository,
     private readonly mediaAssetsRepository: MediaAssetsRepository,
+    private readonly analysesRepository: ClipAudioAnalysesRepository,
   ) {}
 
   async upload(
@@ -230,6 +232,10 @@ export class OriginalFileUploadsService {
           mimeType,
           byteSize,
         },
+        transaction,
+      );
+      await this.analysesRepository.enqueueForStoredMediaAsset(
+        asset.id,
         transaction,
       );
       const fulfilledRequest = await this.requestsRepository.markFulfilled(

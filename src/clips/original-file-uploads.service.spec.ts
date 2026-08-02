@@ -6,6 +6,7 @@ import {
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
+import { ClipAudioAnalysesRepository } from '../audio-analysis/clip-audio-analyses.repository';
 import {
   DatabaseExecutor,
   DatabaseService,
@@ -129,6 +130,10 @@ describe('OriginalFileUploadsService', () => {
     createStoredFanOriginal,
     findStoredByClipAndType,
   } as unknown as MediaAssetsRepository;
+  const enqueueForStoredMediaAsset = jest.fn();
+  const analysesRepository = {
+    enqueueForStoredMediaAsset,
+  } as unknown as ClipAudioAnalysesRepository;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -152,6 +157,7 @@ describe('OriginalFileUploadsService', () => {
       tokenService,
       requestsRepository,
       mediaAssetsRepository,
+      analysesRepository,
     );
 
   it('stores and transactionally fulfills a fan-original upload', async () => {
@@ -216,6 +222,10 @@ describe('OriginalFileUploadsService', () => {
     expect(markFulfilled).toHaveBeenCalledWith(
       requestId,
       claimedLeaseId,
+      transaction,
+    );
+    expect(enqueueForStoredMediaAsset).toHaveBeenCalledWith(
+      asset.id,
       transaction,
     );
   });
