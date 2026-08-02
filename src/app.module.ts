@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { InstagramModule } from './instagram/instagram.module';
 import { DatabaseModule } from './database/database.module';
 import { MediaModule } from './media/media.module';
+import { AudioAnalysisModule } from './audio-analysis/audio-analysis.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { MediaModule } from './media/media.module';
     }),
     InstagramModule,
     DatabaseModule,
+    AudioAnalysisModule,
     MediaModule,
   ],
   controllers: [AppController],
