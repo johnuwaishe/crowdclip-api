@@ -92,7 +92,39 @@ classifier:
 - `audio_analysis/contract.py` — JSON request/response contract with the
   Node worker.
 - `audio_analysis/cli.py` — process entry point.
-- `tests/` — pytest suite.
+- `tests/` — pytest suite, including ground-truth DSP tests on synthetic
+  music-like audio (`tests/test_fingerprint.py`).
+- `tools/evaluate_pair.py` — offline evaluation on a real pair of recordings
+  of the same performance (e.g. soundboard/matrix + audience source from the
+  Live Music Archive); reports per-clip match evidence, an annotation-free
+  consistency check, and false-candidate evidence for threshold tuning.
+
+## Evaluation results (2026-08-02)
+
+Real-world check with moe. 2019-02-23 from the Live Music Archive (CC):
+matrix source as reference, ca14 audience source as query, 8×15 s clips,
+plus clips from a different song as false candidates:
+
+- True matches: similarity 0.636–0.679, peak margin 0.066–0.127, z-score
+  15–19; all 8 aligned to the same constant offset within a 145 ms spread.
+- False candidates: similarity ≤ 0.546, peak margin ≤ 0.002, z-score ≤ 5.1.
+- Default thresholds (similarity ≥ 0.59, margin ≥ 0.02) accepted 8/8 true
+  and 0/8 false candidates.
+
+Crowd singing along (simulated: a detuned, 150 ms-late copy of the song
+mixed over the clip) degrades similarity gracefully — 0.64 with the singer
+as loud as the music (passes thresholds; offset exact), 0.59 with the singer
+6 dB louder (offset still exact). Counterintuitively it costs slightly more
+similarity than uncorrelated noise at equal loudness, because correlated
+interference flips fingerprint bits in a biased way. Covered by
+`test_crowd_singing_along_still_clears_production_thresholds`.
+
+Synthetic stress tests (see `tests/test_fingerprint.py` calibration notes)
+show the envelope: with ±3 % clock drift plus 10 dB SNR noise the correct
+offset is still recovered but raw similarity can fall below 0.59 while
+`peak_z_score` (≥ 5–6 vs ≈ 4.7 for unrelated audio) still separates true
+from false — if real uploads turn out noisier than LMA audience recordings,
+gate on z-score rather than lowering the similarity floor.
 
 ## Setup
 
