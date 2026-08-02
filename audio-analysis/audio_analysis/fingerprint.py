@@ -1,4 +1,10 @@
-"""Concert Stitch-style robust fingerprint sequence and affine alignment."""
+"""Concert Stitch-style robust fingerprint sequence and affine alignment.
+
+Fingerprint per Haitsma & Kalker (ISMIR 2002) with the parameters used in
+Subramanian & Lerch, "Concert Stitch" (ISMIR 2018); alignment replaces the
+paper's DTW+SVM stage with an affine time-scale search — see
+audio-analysis/README.md for the full rationale and deviations.
+"""
 
 from __future__ import annotations
 
