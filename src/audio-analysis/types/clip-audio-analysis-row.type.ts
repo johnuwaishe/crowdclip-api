@@ -6,6 +6,7 @@ export interface ClipAudioAnalysisRow {
   clip_id: string;
   media_asset_id: string;
   catalogue_id: string;
+  show_id: string;
   matched_reference_track_id: string | null;
   provider: string;
   status: ClipAudioAnalysisStatus;
@@ -30,6 +31,7 @@ export interface ClaimedClipAudioAnalysisRow extends ClipAudioAnalysisRow {
 }
 
 export interface ClipAudioAnalysisResultRow extends ClipAudioAnalysisRow {
+  show_name: string;
   catalogue_name: string;
   matched_reference_track_title: string | null;
   matched_reference_track_artist_name: string | null;

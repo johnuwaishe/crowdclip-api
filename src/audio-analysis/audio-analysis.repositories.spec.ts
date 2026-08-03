@@ -33,35 +33,23 @@ describe('audio analysis repositories', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  it('archives the previous catalogue before creating an active one', async () => {
+  it('finds a show catalogue within its workspace', async () => {
     const catalogue: AudioReferenceCatalogueRow = {
       id: 'catalogue-id',
-      instagram_recipient_id: 'instagram-artist-id',
+      show_id: 'show-id',
       name: 'Concert catalogue',
-      status: 'active',
       created_at: now,
       updated_at: now,
     };
-    query
-      .mockResolvedValueOnce(queryResult([]))
-      .mockResolvedValueOnce(queryResult([catalogue]));
+    query.mockResolvedValueOnce(queryResult([catalogue]));
     const repository = new AudioReferenceCataloguesRepository(database);
 
     await expect(
-      repository.createActive({
-        instagramRecipientId: 'instagram-artist-id',
-        name: 'Concert catalogue',
-      }),
+      repository.findByShowId('show-id', 'workspace-id'),
     ).resolves.toBe(catalogue);
-    expect(query).toHaveBeenNthCalledWith(
-      1,
-      expect.stringContaining("SET status = 'archived'"),
-      ['instagram-artist-id'],
-    );
-    expect(query).toHaveBeenNthCalledWith(
-      2,
-      expect.stringContaining('INSERT INTO public.audio_reference_catalogues'),
-      ['instagram-artist-id', 'Concert catalogue'],
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('show.workspace_id = $2'),
+      ['show-id', 'workspace-id'],
     );
   });
 
@@ -101,7 +89,7 @@ describe('audio analysis repositories', () => {
     await expect(repository.retry('analysis-id')).resolves.toBeNull();
     expect(query).toHaveBeenCalledWith(
       expect.stringContaining("status IN ('failed', 'no_match')"),
-      ['analysis-id'],
+      ['analysis-id', null],
     );
   });
 });

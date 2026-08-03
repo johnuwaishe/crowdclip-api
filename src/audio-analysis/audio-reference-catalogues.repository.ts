@@ -6,11 +6,6 @@ import {
 import { AudioReferenceCatalogueRow } from './types/audio-reference-catalogue-row.type';
 import { AudioReferenceTrackRow } from './types/audio-reference-track-row.type';
 
-export interface CreateAudioReferenceCatalogueInput {
-  instagramRecipientId: string;
-  name: string;
-}
-
 export interface CreateUploadingReferenceTrackInput {
   catalogueId: string;
   title: string;
@@ -29,39 +24,6 @@ export interface MarkReferenceTrackReadyInput {
 export class AudioReferenceCataloguesRepository {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  createActive(
-    input: CreateAudioReferenceCatalogueInput,
-  ): Promise<AudioReferenceCatalogueRow> {
-    return this.databaseService.withTransaction(async (transaction) => {
-      await transaction.query(
-        `
-          UPDATE public.audio_reference_catalogues
-          SET status = 'archived'
-          WHERE instagram_recipient_id = $1
-            AND status = 'active'
-        `,
-        [input.instagramRecipientId],
-      );
-      const result = await transaction.query<AudioReferenceCatalogueRow>(
-        `
-          INSERT INTO public.audio_reference_catalogues (
-            instagram_recipient_id,
-            name,
-            status
-          )
-          VALUES ($1, $2, 'active')
-          RETURNING *
-        `,
-        [input.instagramRecipientId, input.name],
-      );
-      const catalogue = result.rows[0];
-      if (!catalogue) {
-        throw new Error('Audio reference catalogue was not created');
-      }
-      return catalogue;
-    });
-  }
-
   async findById(
     id: string,
     executor: DatabaseExecutor = this.databaseService,
@@ -73,6 +35,24 @@ export class AudioReferenceCataloguesRepository {
         WHERE id = $1
       `,
       [id],
+    );
+    return result.rows[0] ?? null;
+  }
+
+  async findByShowId(
+    showId: string,
+    workspaceId?: string,
+    executor: DatabaseExecutor = this.databaseService,
+  ): Promise<AudioReferenceCatalogueRow | null> {
+    const result = await executor.query<AudioReferenceCatalogueRow>(
+      `
+        SELECT catalogue.*
+        FROM public.audio_reference_catalogues AS catalogue
+        JOIN public.shows AS show ON show.id = catalogue.show_id
+        WHERE catalogue.show_id = $1
+          AND ($2::uuid IS NULL OR show.workspace_id = $2)
+      `,
+      [showId, workspaceId ?? null],
     );
     return result.rows[0] ?? null;
   }
@@ -91,7 +71,6 @@ export class AudioReferenceCataloguesRepository {
         SELECT id, $2, $3, 'uploading'
         FROM public.audio_reference_catalogues
         WHERE id = $1
-          AND status = 'active'
         RETURNING *
       `,
       [input.catalogueId, input.title, input.artistName],

@@ -7,42 +7,38 @@ import {
   Post,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AudioReferenceCataloguesService } from './audio-reference-catalogues.service';
 import type {
   AudioReferenceCatalogueView,
   AudioReferenceTrackView,
-  CreateAudioReferenceCatalogueRequest,
   ReferenceTrackMultipartUpload,
   UploadAudioReferenceTrackRequest,
 } from './audio-reference-catalogues.service';
+import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
+import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
+import type { WorkspaceSession } from '../workspaces/workspace-session.service';
 
 const MAX_MULTIPART_REFERENCE_BYTES = 100 * 1024 * 1024;
 
-// TODO: Replace this local bootstrap surface with account-scoped authorization
-// before exposing reference catalogue management outside a trusted environment.
-@Controller('internal/audio-catalogues')
+@Controller('shows/:showId/reference-tracks')
+@UseGuards(WorkspaceSessionGuard)
 export class AudioReferenceCataloguesController {
   constructor(
     private readonly cataloguesService: AudioReferenceCataloguesService,
   ) {}
 
-  @Post()
-  create(
-    @Body() request: CreateAudioReferenceCatalogueRequest,
-  ): Promise<AudioReferenceCatalogueView> {
-    return this.cataloguesService.create(request);
-  }
-
-  @Get(':catalogueId')
+  @Get()
   get(
-    @Param('catalogueId') catalogueId: string,
+    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @Param('showId') showId: string,
   ): Promise<AudioReferenceCatalogueView> {
-    return this.cataloguesService.get(catalogueId);
+    return this.cataloguesService.getForShow(showId, session.workspaceId);
   }
 
-  @Post(':catalogueId/tracks')
+  @Post()
   @HttpCode(200)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -55,10 +51,16 @@ export class AudioReferenceCataloguesController {
     }),
   )
   uploadTrack(
-    @Param('catalogueId') catalogueId: string,
+    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @Param('showId') showId: string,
     @Body() request: UploadAudioReferenceTrackRequest,
     @UploadedFile() file: ReferenceTrackMultipartUpload | undefined,
   ): Promise<AudioReferenceTrackView> {
-    return this.cataloguesService.uploadTrack(catalogueId, request, file);
+    return this.cataloguesService.uploadTrackForShow(
+      showId,
+      session.workspaceId,
+      request,
+      file,
+    );
   }
 }

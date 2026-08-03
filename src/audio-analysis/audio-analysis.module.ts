@@ -12,9 +12,10 @@ import { AudioReferenceCataloguesService } from './audio-reference-catalogues.se
 import { ClipAudioAnalysesRepository } from './clip-audio-analyses.repository';
 import { ConcertAudioAnalyzerClient } from './concert-audio-analyzer.client';
 import { SameMomentGroupingService } from './same-moment-grouping.service';
+import { WorkspacesModule } from '../workspaces/workspaces.module';
 
 @Module({
-  imports: [MediaStorageModule],
+  imports: [MediaStorageModule, WorkspacesModule],
   controllers: [AudioReferenceCataloguesController, AudioAnalysisController],
   providers: [
     AudioAnalysisConfig,

@@ -17,9 +17,8 @@ describe('AudioReferenceCataloguesService', () => {
   const now = new Date('2026-08-01T00:00:00.000Z');
   const catalogue = {
     id: 'catalogue-id',
-    instagram_recipient_id: 'instagram-artist-id',
+    show_id: 'show-id',
     name: 'Cornell test catalogue',
-    status: 'active' as const,
     created_at: now,
     updated_at: now,
   };
@@ -60,15 +59,13 @@ describe('AudioReferenceCataloguesService', () => {
   } as AudioAnalysisConfig;
   const upload = jest.fn();
   const storage = { upload } as unknown as SupabaseObjectStorage;
-  const createActive = jest.fn();
-  const findById = jest.fn();
+  const findByShowId = jest.fn();
   const listTracks = jest.fn();
   const createUploadingTrack = jest.fn();
   const markTrackReady = jest.fn();
   const markTrackFailed = jest.fn();
   const cataloguesRepository = {
-    createActive,
-    findById,
+    findByShowId,
     listTracks,
     createUploadingTrack,
     markTrackReady,
@@ -96,22 +93,19 @@ describe('AudioReferenceCataloguesService', () => {
       analysesRepository,
     );
 
-  it('creates the active catalogue for an Instagram recipient', async () => {
-    createActive.mockResolvedValueOnce(catalogue);
+  it('returns the catalogue created with a show', async () => {
+    findByShowId.mockResolvedValueOnce(catalogue);
+    listTracks.mockResolvedValueOnce([]);
+
     await expect(
-      service().create({
-        instagramRecipientId: ' instagram-artist-id ',
-        name: ' Cornell test catalogue ',
-      }),
+      service().getForShow('show-id', 'workspace-id'),
     ).resolves.toMatchObject({
       id: catalogue.id,
-      instagramRecipientId: 'instagram-artist-id',
+      showId: 'show-id',
       tracks: [],
     });
-    expect(createActive).toHaveBeenCalledWith({
-      instagramRecipientId: 'instagram-artist-id',
-      name: 'Cornell test catalogue',
-    });
+    expect(findByShowId).toHaveBeenCalledWith('show-id', 'workspace-id');
+    expect(listTracks).toHaveBeenCalledWith(catalogue.id);
   });
 
   it('uploads a reference and queues existing stored clips atomically', async () => {
@@ -120,14 +114,16 @@ describe('AudioReferenceCataloguesService', () => {
       mimetype: 'audio/mpeg',
       size: 3,
     };
+    findByShowId.mockResolvedValueOnce(catalogue);
     createUploadingTrack.mockResolvedValueOnce(uploadingTrack);
     upload.mockResolvedValueOnce(undefined);
     markTrackReady.mockResolvedValueOnce(readyTrack);
     enqueueStoredClipsForCatalogue.mockResolvedValueOnce(4);
 
     await expect(
-      service().uploadTrack(
-        catalogue.id,
+      service().uploadTrackForShow(
+        'show-id',
+        'workspace-id',
         { title: 'Brown Eyed Women', artistName: 'Grateful Dead' },
         file,
       ),
@@ -161,9 +157,12 @@ describe('AudioReferenceCataloguesService', () => {
   });
 
   it('rejects a non-audio reference before creating a row', async () => {
+    findByShowId.mockResolvedValueOnce(catalogue);
+
     await expect(
-      service().uploadTrack(
-        catalogue.id,
+      service().uploadTrackForShow(
+        'show-id',
+        'workspace-id',
         { title: 'Brown Eyed Women' },
         { buffer: Buffer.from([1]), mimetype: 'video/mp4', size: 1 },
       ),
@@ -172,6 +171,7 @@ describe('AudioReferenceCataloguesService', () => {
   });
 
   it('marks the upload failed when object storage fails', async () => {
+    findByShowId.mockResolvedValueOnce(catalogue);
     createUploadingTrack.mockResolvedValueOnce(uploadingTrack);
     upload.mockRejectedValueOnce(new Error('Storage unavailable'));
     markTrackFailed.mockResolvedValueOnce({
@@ -181,8 +181,9 @@ describe('AudioReferenceCataloguesService', () => {
     });
 
     await expect(
-      service().uploadTrack(
-        catalogue.id,
+      service().uploadTrackForShow(
+        'show-id',
+        'workspace-id',
         { title: 'Brown Eyed Women' },
         { buffer: Buffer.from([1]), mimetype: 'audio/mpeg', size: 1 },
       ),

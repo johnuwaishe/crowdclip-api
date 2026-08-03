@@ -22,11 +22,6 @@ export interface ReferenceTrackMultipartUpload {
   size: number;
 }
 
-export interface CreateAudioReferenceCatalogueRequest {
-  instagramRecipientId?: unknown;
-  name?: unknown;
-}
-
 export interface UploadAudioReferenceTrackRequest {
   title?: unknown;
   artistName?: unknown;
@@ -34,9 +29,8 @@ export interface UploadAudioReferenceTrackRequest {
 
 export interface AudioReferenceCatalogueView {
   id: string;
-  instagramRecipientId: string;
+  showId: string;
   name: string;
-  status: string;
   tracks: AudioReferenceTrackView[];
 }
 
@@ -63,24 +57,14 @@ export class AudioReferenceCataloguesService {
     private readonly analysesRepository: ClipAudioAnalysesRepository,
   ) {}
 
-  async create(
-    request: CreateAudioReferenceCatalogueRequest,
+  async getForShow(
+    showId: string,
+    workspaceId: string,
   ): Promise<AudioReferenceCatalogueView> {
-    const instagramRecipientId = this.requiredText(
-      request.instagramRecipientId,
-      'instagramRecipientId',
-      500,
+    const catalogue = await this.cataloguesRepository.findByShowId(
+      showId,
+      workspaceId,
     );
-    const name = this.requiredText(request.name, 'name', 200);
-    const catalogue = await this.cataloguesRepository.createActive({
-      instagramRecipientId,
-      name,
-    });
-    return this.toCatalogueView(catalogue, []);
-  }
-
-  async get(catalogueId: string): Promise<AudioReferenceCatalogueView> {
-    const catalogue = await this.cataloguesRepository.findById(catalogueId);
     if (!catalogue) {
       throw new NotFoundException('Audio reference catalogue not found');
     }
@@ -88,7 +72,23 @@ export class AudioReferenceCataloguesService {
     return this.toCatalogueView(catalogue, tracks);
   }
 
-  async uploadTrack(
+  async uploadTrackForShow(
+    showId: string,
+    workspaceId: string,
+    request: UploadAudioReferenceTrackRequest,
+    file: ReferenceTrackMultipartUpload | undefined,
+  ): Promise<AudioReferenceTrackView> {
+    const catalogue = await this.cataloguesRepository.findByShowId(
+      showId,
+      workspaceId,
+    );
+    if (!catalogue) {
+      throw new NotFoundException('Show reference catalogue not found');
+    }
+    return this.uploadTrack(catalogue.id, request, file);
+  }
+
+  private async uploadTrack(
     catalogueId: string,
     request: UploadAudioReferenceTrackRequest,
     file: ReferenceTrackMultipartUpload | undefined,
@@ -106,7 +106,7 @@ export class AudioReferenceCataloguesService {
       artistName,
     });
     if (!track) {
-      throw new NotFoundException('Active audio reference catalogue not found');
+      throw new NotFoundException('Audio reference catalogue not found');
     }
     const storagePath = `${catalogueId}/references/${track.id}.${mediaType.extension}`;
 
@@ -223,9 +223,8 @@ export class AudioReferenceCataloguesService {
   ): AudioReferenceCatalogueView {
     return {
       id: catalogue.id,
-      instagramRecipientId: catalogue.instagram_recipient_id,
+      showId: catalogue.show_id,
       name: catalogue.name,
-      status: catalogue.status,
       tracks: tracks.map((track) => this.toTrackView(track)),
     };
   }

@@ -44,6 +44,7 @@ export class ClipAudioAnalysesRepository {
           clip_id,
           media_asset_id,
           catalogue_id,
+          show_id,
           provider,
           status
         )
@@ -51,16 +52,14 @@ export class ClipAudioAnalysesRepository {
           clip.id,
           media_asset.id,
           catalogue.id,
+          clip.show_id,
           $2,
           'pending'
         FROM public.media_assets AS media_asset
         INNER JOIN public.clips AS clip
           ON clip.id = media_asset.clip_id
-        INNER JOIN public.webhook_events AS webhook_event
-          ON webhook_event.id = clip.source_webhook_event_id
         INNER JOIN public.audio_reference_catalogues AS catalogue
-          ON catalogue.instagram_recipient_id = webhook_event.recipient_id
-         AND catalogue.status = 'active'
+          ON catalogue.show_id = clip.show_id
         WHERE media_asset.id = $1
           AND media_asset.status = 'stored'
           AND (
@@ -106,6 +105,7 @@ export class ClipAudioAnalysesRepository {
           clip_id,
           media_asset_id,
           catalogue_id,
+          show_id,
           provider,
           status
         )
@@ -113,13 +113,12 @@ export class ClipAudioAnalysesRepository {
           clip.id,
           preferred_asset.id,
           catalogue.id,
+          catalogue.show_id,
           $2,
           'pending'
         FROM public.audio_reference_catalogues AS catalogue
-        INNER JOIN public.webhook_events AS webhook_event
-          ON webhook_event.recipient_id = catalogue.instagram_recipient_id
         INNER JOIN public.clips AS clip
-          ON clip.source_webhook_event_id = webhook_event.id
+          ON clip.show_id = catalogue.show_id
         INNER JOIN LATERAL (
           SELECT media_asset.id
           FROM public.media_assets AS media_asset
@@ -136,7 +135,6 @@ export class ClipAudioAnalysesRepository {
           LIMIT 1
         ) AS preferred_asset ON TRUE
         WHERE catalogue.id = $1
-          AND catalogue.status = 'active'
           AND EXISTS (
             SELECT 1
             FROM public.audio_reference_tracks AS reference_track
@@ -339,7 +337,10 @@ export class ClipAudioAnalysesRepository {
     return result.rows;
   }
 
-  async retry(id: string): Promise<ClipAudioAnalysisRow | null> {
+  async retry(
+    id: string,
+    workspaceId?: string,
+  ): Promise<ClipAudioAnalysisRow | null> {
     const result = await this.databaseService.query<ClipAudioAnalysisRow>(
       `
         UPDATE public.clip_audio_analyses
@@ -358,30 +359,46 @@ export class ClipAudioAnalysesRepository {
             completed_at = NULL
         WHERE id = $1
           AND status IN ('failed', 'no_match')
+          AND (
+            $2::uuid IS NULL
+            OR EXISTS (
+              SELECT 1
+              FROM public.shows AS show
+              WHERE show.id = clip_audio_analyses.show_id
+                AND show.workspace_id = $2
+            )
+          )
         RETURNING *
       `,
-      [id],
+      [id, workspaceId ?? null],
     );
     return result.rows[0] ?? null;
   }
 
-  async listForClip(clipId: string): Promise<ClipAudioAnalysisResultRow[]> {
+  async listForClip(
+    clipId: string,
+    workspaceId?: string,
+  ): Promise<ClipAudioAnalysisResultRow[]> {
     const result = await this.databaseService.query<ClipAudioAnalysisResultRow>(
       `
           SELECT
             analysis.*,
+            show.name AS show_name,
             catalogue.name AS catalogue_name,
             reference_track.title AS matched_reference_track_title,
             reference_track.artist_name AS matched_reference_track_artist_name
           FROM public.clip_audio_analyses AS analysis
           INNER JOIN public.audio_reference_catalogues AS catalogue
             ON catalogue.id = analysis.catalogue_id
+          INNER JOIN public.shows AS show
+            ON show.id = analysis.show_id
           LEFT JOIN public.audio_reference_tracks AS reference_track
             ON reference_track.id = analysis.matched_reference_track_id
           WHERE analysis.clip_id = $1
+            AND ($2::uuid IS NULL OR show.workspace_id = $2)
           ORDER BY analysis.created_at DESC, analysis.id DESC
         `,
-      [clipId],
+      [clipId, workspaceId ?? null],
     );
     return result.rows;
   }
