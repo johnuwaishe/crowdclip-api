@@ -7,9 +7,14 @@ import { WebhookEventsRepository } from './webhooks/webhook-events.repository';
 import { ClipsModule } from '../clips/clips.module';
 import { StoryMentionProcessor } from './webhooks/story-mention.processor';
 import { StoryMentionWorker } from './webhooks/story-mention.worker';
+import { WorkspacesModule } from '../workspaces/workspaces.module';
+import { InstagramConnectionService } from './instagram-connection.service';
+import { InstagramOAuthClient } from './instagram-oauth.client';
+import { InstagramOAuthConfig } from './instagram-oauth.config';
+import { InstagramOAuthStateService } from './instagram-oauth-state.service';
 
 @Module({
-  imports: [ClipsModule],
+  imports: [ClipsModule, WorkspacesModule],
   controllers: [InstagramWebhookController, InstagramAuthController],
   providers: [
     InstagramWebhookService,
@@ -17,6 +22,10 @@ import { StoryMentionWorker } from './webhooks/story-mention.worker';
     StoryMentionWorker,
     MetaSignatureService,
     WebhookEventsRepository,
+    InstagramOAuthConfig,
+    InstagramOAuthClient,
+    InstagramOAuthStateService,
+    InstagramConnectionService,
   ],
 })
 export class InstagramModule {}
