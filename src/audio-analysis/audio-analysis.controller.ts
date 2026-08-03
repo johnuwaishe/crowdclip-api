@@ -8,18 +8,18 @@ import {
 } from '@nestjs/common';
 import { AudioAnalysisResultsService } from './audio-analysis-results.service';
 import { ClipAudioAnalysisResultRow } from './types/clip-audio-analysis-row.type';
-import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
-import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
-import type { WorkspaceSession } from '../workspaces/workspace-session.service';
+import { WorkspaceAccessGuard } from '../workspaces/workspace-access.guard';
+import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
+import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
 
 @Controller('internal/audio-analyses')
-@UseGuards(WorkspaceSessionGuard)
+@UseGuards(WorkspaceAccessGuard)
 export class AudioAnalysisController {
   constructor(private readonly resultsService: AudioAnalysisResultsService) {}
 
   @Get('clips/:clipId')
   listForClip(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('clipId') clipId: string,
   ): Promise<ClipAudioAnalysisResultRow[]> {
     return this.resultsService.listForClip(clipId, session.workspaceId);
@@ -28,7 +28,7 @@ export class AudioAnalysisController {
   @Post(':analysisId/retry')
   @HttpCode(200)
   retry(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('analysisId') analysisId: string,
   ): Promise<{ id: string; status: 'pending' }> {
     return this.resultsService.retry(analysisId, session.workspaceId);

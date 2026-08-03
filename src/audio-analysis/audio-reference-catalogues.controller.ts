@@ -17,14 +17,14 @@ import type {
   ReferenceTrackMultipartUpload,
   UploadAudioReferenceTrackRequest,
 } from './audio-reference-catalogues.service';
-import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
-import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
-import type { WorkspaceSession } from '../workspaces/workspace-session.service';
+import { WorkspaceAccessGuard } from '../workspaces/workspace-access.guard';
+import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
+import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
 
 const MAX_MULTIPART_REFERENCE_BYTES = 100 * 1024 * 1024;
 
 @Controller('shows/:showId/reference-tracks')
-@UseGuards(WorkspaceSessionGuard)
+@UseGuards(WorkspaceAccessGuard)
 export class AudioReferenceCataloguesController {
   constructor(
     private readonly cataloguesService: AudioReferenceCataloguesService,
@@ -32,7 +32,7 @@ export class AudioReferenceCataloguesController {
 
   @Get()
   get(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId') showId: string,
   ): Promise<AudioReferenceCatalogueView> {
     return this.cataloguesService.getForShow(showId, session.workspaceId);
@@ -51,7 +51,7 @@ export class AudioReferenceCataloguesController {
     }),
   )
   uploadTrack(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId') showId: string,
     @Body() request: UploadAudioReferenceTrackRequest,
     @UploadedFile() file: ReferenceTrackMultipartUpload | undefined,

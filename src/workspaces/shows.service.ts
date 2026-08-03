@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ShowsRepository } from './shows.repository';
 import { ShowWithCatalogueRow } from './types/show-row.type';
-import { WorkspaceSession } from './workspace-session.service';
+import { WorkspaceAccess } from './types/workspace-access.type';
 
 export interface ShowRequestBody {
   instagramAccountId?: unknown;
@@ -20,7 +20,7 @@ export interface ShowRequestBody {
 export class ShowsService {
   constructor(private readonly showsRepository: ShowsRepository) {}
 
-  async create(session: WorkspaceSession, body: ShowRequestBody) {
+  async create(session: WorkspaceAccess, body: ShowRequestBody) {
     const show = await this.showsRepository.create({
       workspaceId: session.workspaceId,
       instagramAccountId: this.requiredUuid(
@@ -38,16 +38,16 @@ export class ShowsService {
     return this.toView(show);
   }
 
-  async list(session: WorkspaceSession) {
+  async list(session: WorkspaceAccess) {
     const shows = await this.showsRepository.list(session.workspaceId);
     return { shows: shows.map((show) => this.toView(show)) };
   }
 
-  async get(session: WorkspaceSession, id: string) {
+  async get(session: WorkspaceAccess, id: string) {
     return this.toView(await this.requiredShow(session, id));
   }
 
-  async update(session: WorkspaceSession, id: string, body: ShowRequestBody) {
+  async update(session: WorkspaceAccess, id: string, body: ShowRequestBody) {
     const current = await this.requiredShow(session, id);
     const show = await this.showsRepository.update({
       id,
@@ -64,7 +64,7 @@ export class ShowsService {
     return this.toView(show);
   }
 
-  async activate(session: WorkspaceSession, id: string) {
+  async activate(session: WorkspaceAccess, id: string) {
     const show = await this.showsRepository.activate(id, session.workspaceId);
     if (!show) {
       const current = await this.showsRepository.findById(
@@ -79,13 +79,13 @@ export class ShowsService {
     return this.toView(show);
   }
 
-  async end(session: WorkspaceSession, id: string) {
+  async end(session: WorkspaceAccess, id: string) {
     const show = await this.showsRepository.end(id, session.workspaceId);
     if (!show) throw new ConflictException('Show is already ended or missing');
     return this.toView(show);
   }
 
-  private async requiredShow(session: WorkspaceSession, id: string) {
+  private async requiredShow(session: WorkspaceAccess, id: string) {
     const show = await this.showsRepository.findById(id, session.workspaceId);
     if (!show) throw new NotFoundException('Show not found');
     return show;

@@ -7,8 +7,8 @@ import { ClipsService } from './../src/clips/clips.service';
 import { OriginalFileUploadsService } from './../src/clips/original-file-uploads.service';
 import { OriginalFileUploadTokenGuard } from './../src/clips/original-file-upload-token.guard';
 import { DatabaseService } from './../src/database/database.service';
-import { WorkspaceSessionGuard } from './../src/workspaces/workspace-session.guard';
-import { WorkspaceSessionRequest } from './../src/workspaces/current-workspace-session.decorator';
+import { WorkspaceAccessGuard } from './../src/workspaces/workspace-access.guard';
+import { WorkspaceAccessRequest } from './../src/workspaces/current-workspace-access.decorator';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -50,14 +50,17 @@ describe('AppController (e2e)', () => {
       .useValue({
         canActivate: () => true,
       })
-      .overrideGuard(WorkspaceSessionGuard)
+      .overrideGuard(WorkspaceAccessGuard)
       .useValue({
         canActivate: (context: ExecutionContext) => {
           context
             .switchToHttp()
-            .getRequest<WorkspaceSessionRequest>().crowdclipSession = {
+            .getRequest<WorkspaceAccessRequest>().crowdclipWorkspace = {
             workspaceId,
             instagramAccountId,
+            userId: null,
+            authenticationMethod: 'instagram_provisional',
+            provisional: true,
             expiresAt: new Date('2026-09-01T00:00:00.000Z'),
           };
           return true;
@@ -125,6 +128,10 @@ describe('AppController (e2e)', () => {
       .patch('/clips/8ad85e44-af72-430c-a8ca-14db25b3e37e/media-choice')
       .send({ mediaChoice: 'undecided' })
       .expect(400);
+  });
+
+  it('/auth/account/claim requires a verified Supabase identity (POST)', () => {
+    return request(app.getHttpServer()).post('/auth/account/claim').expect(401);
   });
 
   it('/uploads/original/:token accepts a fan-original file (POST)', () => {

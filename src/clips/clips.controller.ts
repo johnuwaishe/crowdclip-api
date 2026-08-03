@@ -15,21 +15,21 @@ import {
   ClipDecisionResult,
 } from './types/clip-decision.type';
 import { ClipReview } from './types/clip-review.type';
-import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
-import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
-import type { WorkspaceSession } from '../workspaces/workspace-session.service';
+import { WorkspaceAccessGuard } from '../workspaces/workspace-access.guard';
+import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
+import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
 
 const DEFAULT_CLIP_LIMIT = 20;
 const MAX_CLIP_LIMIT = 100;
 
 @Controller('clips')
-@UseGuards(WorkspaceSessionGuard)
+@UseGuards(WorkspaceAccessGuard)
 export class ClipsController {
   constructor(private readonly clipsService: ClipsService) {}
 
   @Get()
   async listRecent(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Query('limit') rawLimit?: string,
   ): Promise<{ clips: ClipReview[] }> {
     const limit = this.parseLimit(rawLimit);
@@ -43,7 +43,7 @@ export class ClipsController {
 
   @Patch(':clipId/media-choice')
   async decideMediaChoice(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('clipId', new ParseUUIDPipe({ version: '4' })) clipId: string,
     @Body() body: unknown,
   ): Promise<ClipDecisionResult> {

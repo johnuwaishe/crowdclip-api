@@ -8,33 +8,33 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentWorkspaceSession } from './current-workspace-session.decorator';
+import { CurrentWorkspaceAccess } from './current-workspace-access.decorator';
 import { ShowsService } from './shows.service';
 import type { ShowRequestBody } from './shows.service';
-import type { WorkspaceSession } from './workspace-session.service';
-import { WorkspaceSessionGuard } from './workspace-session.guard';
+import type { WorkspaceAccess } from './types/workspace-access.type';
+import { WorkspaceAccessGuard } from './workspace-access.guard';
 
 @Controller('shows')
-@UseGuards(WorkspaceSessionGuard)
+@UseGuards(WorkspaceAccessGuard)
 export class ShowsController {
   constructor(private readonly showsService: ShowsService) {}
 
   @Post()
   create(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Body() body: ShowRequestBody,
   ) {
     return this.showsService.create(session, body);
   }
 
   @Get()
-  list(@CurrentWorkspaceSession() session: WorkspaceSession) {
+  list(@CurrentWorkspaceAccess() session: WorkspaceAccess) {
     return this.showsService.list(session);
   }
 
   @Get(':showId')
   get(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId', new ParseUUIDPipe({ version: '4' })) showId: string,
   ) {
     return this.showsService.get(session, showId);
@@ -42,7 +42,7 @@ export class ShowsController {
 
   @Patch(':showId')
   update(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId', new ParseUUIDPipe({ version: '4' })) showId: string,
     @Body() body: ShowRequestBody,
   ) {
@@ -51,7 +51,7 @@ export class ShowsController {
 
   @Post(':showId/activate')
   activate(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId', new ParseUUIDPipe({ version: '4' })) showId: string,
   ) {
     return this.showsService.activate(session, showId);
@@ -59,7 +59,7 @@ export class ShowsController {
 
   @Post(':showId/end')
   end(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId', new ParseUUIDPipe({ version: '4' })) showId: string,
   ) {
     return this.showsService.end(session, showId);

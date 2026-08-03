@@ -6,14 +6,14 @@ import {
   UseGuards,
   Post,
 } from '@nestjs/common';
-import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
-import type { WorkspaceSession } from '../workspaces/workspace-session.service';
-import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
+import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
+import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
+import { WorkspaceAccessGuard } from '../workspaces/workspace-access.guard';
 import { ShowTimelineService } from './show-timeline.service';
 import { ShowClipAssignmentService } from './show-clip-assignment.service';
 
 @Controller('shows/:showId')
-@UseGuards(WorkspaceSessionGuard)
+@UseGuards(WorkspaceAccessGuard)
 export class ShowTimelineController {
   constructor(
     private readonly timelineService: ShowTimelineService,
@@ -22,7 +22,7 @@ export class ShowTimelineController {
 
   @Get('timeline')
   get(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId', new ParseUUIDPipe({ version: '4' })) showId: string,
   ) {
     return this.timelineService.get(showId, session.workspaceId);
@@ -30,7 +30,7 @@ export class ShowTimelineController {
 
   @Post('clips/:clipId')
   assignClip(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId', new ParseUUIDPipe({ version: '4' })) showId: string,
     @Param('clipId', new ParseUUIDPipe({ version: '4' })) clipId: string,
   ) {
