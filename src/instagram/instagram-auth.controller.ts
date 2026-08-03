@@ -8,9 +8,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
-import type { WorkspaceSession } from '../workspaces/workspace-session.service';
-import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
+import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
+import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
+import { WorkspaceAccessGuard } from '../workspaces/workspace-access.guard';
 import { WorkspaceSessionService } from '../workspaces/workspace-session.service';
 import { WorkspacesRepository } from '../workspaces/workspaces.repository';
 import { InstagramConnectionService } from './instagram-connection.service';
@@ -65,6 +65,9 @@ export class InstagramAuthController {
       throw new BadRequestException('Instagram authorization state is invalid');
     }
     const connected = await this.connectionService.connect(code);
+    const verifiedOwner = await this.workspacesRepository.findVerifiedOwner(
+      connected.workspace.id,
+    );
     const sessionToken = this.sessions.issue(
       connected.instagramAccount.id,
       connected.workspace.id,
@@ -92,19 +95,39 @@ export class InstagramAuthController {
         username: connected.instagramAccount.username,
         accountType: connected.instagramAccount.account_type,
       },
+      user: verifiedOwner
+        ? {
+            id: verifiedOwner.user_id,
+            username: verifiedOwner.username,
+          }
+        : null,
+      provisional: true,
+      recoveryEmailConfigured: verifiedOwner !== null,
+      nextStep: verifiedOwner
+        ? ('open_workspace' as const)
+        : ('add_recovery_email' as const),
     };
   }
 
   @Post('disconnect')
-  @UseGuards(WorkspaceSessionGuard)
+  @UseGuards(WorkspaceAccessGuard)
   async disconnect(
-    @CurrentWorkspaceSession() session: WorkspaceSession,
+    @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ disconnected: true }> {
-    await this.workspacesRepository.disconnect(
-      session.instagramAccountId,
-      session.workspaceId,
-    );
+    const accountId =
+      session.instagramAccountId ??
+      (
+        await this.workspacesRepository.findFirstConnectedAccount(
+          session.workspaceId,
+        )
+      )?.id;
+    if (accountId) {
+      await this.workspacesRepository.disconnect(
+        accountId,
+        session.workspaceId,
+      );
+    }
     response.clearCookie(this.sessions.cookieName, { path: '/' });
     return { disconnected: true };
   }

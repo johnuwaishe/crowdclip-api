@@ -23,6 +23,11 @@ export interface ConnectedWorkspace {
   created: boolean;
 }
 
+export interface VerifiedWorkspaceOwner {
+  user_id: string;
+  username: string;
+}
+
 @Injectable()
 export class WorkspacesRepository {
   constructor(private readonly databaseService: DatabaseService) {}
@@ -133,6 +138,23 @@ export class WorkspacesRepository {
     return result.rows[0] ?? null;
   }
 
+  async findFirstConnectedAccount(
+    workspaceId: string,
+  ): Promise<InstagramAccountRow | null> {
+    const result = await this.databaseService.query<InstagramAccountRow>(
+      `
+        SELECT *
+        FROM public.instagram_accounts
+        WHERE workspace_id = $1
+          AND connection_status = 'connected'
+        ORDER BY connected_at, id
+        LIMIT 1
+      `,
+      [workspaceId],
+    );
+    return result.rows[0] ?? null;
+  }
+
   async getWorkspace(workspaceId: string): Promise<{
     workspace: WorkspaceRow;
     accounts: InstagramAccountRow[];
@@ -149,6 +171,25 @@ export class WorkspacesRepository {
       [workspaceId],
     );
     return { workspace, accounts: accounts.rows };
+  }
+
+  async findVerifiedOwner(
+    workspaceId: string,
+  ): Promise<VerifiedWorkspaceOwner | null> {
+    const result = await this.databaseService.query<VerifiedWorkspaceOwner>(
+      `
+        SELECT profile.user_id, profile.username
+        FROM public.workspace_memberships AS membership
+        JOIN public.user_profiles AS profile
+          ON profile.user_id = membership.user_id
+        WHERE membership.workspace_id = $1
+          AND membership.role = 'owner'
+        ORDER BY membership.created_at, membership.user_id
+        LIMIT 1
+      `,
+      [workspaceId],
+    );
+    return result.rows[0] ?? null;
   }
 
   async disconnect(accountId: string, workspaceId: string): Promise<boolean> {

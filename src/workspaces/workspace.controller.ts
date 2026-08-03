@@ -1,20 +1,24 @@
 import { Controller, Get, NotFoundException, UseGuards } from '@nestjs/common';
-import { CurrentWorkspaceSession } from './current-workspace-session.decorator';
-import type { WorkspaceSession } from './workspace-session.service';
-import { WorkspaceSessionGuard } from './workspace-session.guard';
+import { CurrentWorkspaceAccess } from './current-workspace-access.decorator';
+import type { WorkspaceAccess } from './types/workspace-access.type';
+import { WorkspaceAccessGuard } from './workspace-access.guard';
 import { WorkspacesRepository } from './workspaces.repository';
 
 @Controller('workspace')
-@UseGuards(WorkspaceSessionGuard)
+@UseGuards(WorkspaceAccessGuard)
 export class WorkspaceController {
   constructor(private readonly workspacesRepository: WorkspacesRepository) {}
 
   @Get()
-  async getCurrent(@CurrentWorkspaceSession() session: WorkspaceSession) {
+  async getCurrent(@CurrentWorkspaceAccess() session: WorkspaceAccess) {
     const result = await this.workspacesRepository.getWorkspace(
       session.workspaceId,
     );
     if (!result) throw new NotFoundException('Workspace not found');
+    const verifiedOwner = await this.workspacesRepository.findVerifiedOwner(
+      session.workspaceId,
+    );
+    const recoveryEmailConfigured = verifiedOwner !== null;
     return {
       id: result.workspace.id,
       name: result.workspace.name,
@@ -28,6 +32,17 @@ export class WorkspaceController {
         connectionStatus: account.connection_status,
         connectedAt: account.connected_at,
       })),
+      user: verifiedOwner
+        ? {
+            id: verifiedOwner.user_id,
+            username: verifiedOwner.username,
+          }
+        : null,
+      provisional: session.provisional,
+      recoveryEmailConfigured,
+      nextStep: recoveryEmailConfigured
+        ? null
+        : ('add_recovery_email' as const),
     };
   }
 }
