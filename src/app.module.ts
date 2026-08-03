@@ -6,6 +6,7 @@ import { InstagramModule } from './instagram/instagram.module';
 import { DatabaseModule } from './database/database.module';
 import { MediaModule } from './media/media.module';
 import { AudioAnalysisModule } from './audio-analysis/audio-analysis.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AudioAnalysisModule } from './audio-analysis/audio-analysis.module';
     }),
     InstagramModule,
     DatabaseModule,
+    WorkspacesModule,
     AudioAnalysisModule,
     MediaModule,
   ],

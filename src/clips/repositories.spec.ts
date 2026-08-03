@@ -90,6 +90,8 @@ describe('clip workflow repositories', () => {
       id: 'clip-id',
       fan_id: 'fan-id',
       source_webhook_event_id: 'event-id',
+      instagram_account_id: 'instagram-account-id',
+      show_id: 'show-id',
       media_choice: 'undecided',
       mentioned_at: now,
       created_at: now,
@@ -106,7 +108,7 @@ describe('clip workflow repositories', () => {
 
       expect(query).toHaveBeenCalledWith(
         expect.stringContaining('FOR UPDATE'),
-        [clip.id],
+        [clip.id, null],
       );
     });
 
@@ -149,17 +151,17 @@ describe('clip workflow repositories', () => {
       query.mockResolvedValueOnce(queryResult([reviewRow]));
       const repository = new ClipsRepository(databaseService);
 
-      await expect(repository.listRecentForReview(20)).resolves.toEqual([
-        reviewRow,
-      ]);
+      await expect(
+        repository.listRecentForReview(20, 'workspace-id'),
+      ).resolves.toEqual([reviewRow]);
 
-      expect(query).toHaveBeenCalledWith(
-        expect.stringContaining('LIMIT $1'),
-        [20],
-      );
+      expect(query).toHaveBeenCalledWith(expect.stringContaining('LIMIT $1'), [
+        20,
+        'workspace-id',
+      ]);
       expect(query).toHaveBeenCalledWith(
         expect.stringContaining('LEFT JOIN public.media_assets'),
-        [20],
+        [20, 'workspace-id'],
       );
     });
 
@@ -172,6 +174,8 @@ describe('clip workflow repositories', () => {
           {
             fanId: 'fan-id',
             sourceWebhookEventId: 'event-id',
+            instagramAccountId: 'instagram-account-id',
+            showId: 'show-id',
             mentionedAt: now,
           },
           executor,
@@ -180,7 +184,7 @@ describe('clip workflow repositories', () => {
 
       expect(query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO public.clips'),
-        ['fan-id', 'event-id', now],
+        ['fan-id', 'event-id', 'instagram-account-id', 'show-id', now],
       );
     });
 
@@ -195,6 +199,8 @@ describe('clip workflow repositories', () => {
           {
             fanId: 'fan-id',
             sourceWebhookEventId: 'event-id',
+            instagramAccountId: 'instagram-account-id',
+            showId: null,
             mentionedAt: now,
           },
           executor,

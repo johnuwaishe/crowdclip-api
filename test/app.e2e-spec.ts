@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { ExecutionContext, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
@@ -7,9 +7,13 @@ import { ClipsService } from './../src/clips/clips.service';
 import { OriginalFileUploadsService } from './../src/clips/original-file-uploads.service';
 import { OriginalFileUploadTokenGuard } from './../src/clips/original-file-upload-token.guard';
 import { DatabaseService } from './../src/database/database.service';
+import { WorkspaceSessionGuard } from './../src/workspaces/workspace-session.guard';
+import { WorkspaceSessionRequest } from './../src/workspaces/current-workspace-session.decorator';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
+  const workspaceId = '20000000-0000-4000-8000-000000000002';
+  const instagramAccountId = '10000000-0000-4000-8000-000000000001';
   const listRecentForReview = jest.fn().mockResolvedValue([]);
   const decideMediaChoice = jest.fn();
   const uploadOriginalFile = jest.fn();
@@ -46,6 +50,19 @@ describe('AppController (e2e)', () => {
       .useValue({
         canActivate: () => true,
       })
+      .overrideGuard(WorkspaceSessionGuard)
+      .useValue({
+        canActivate: (context: ExecutionContext) => {
+          context
+            .switchToHttp()
+            .getRequest<WorkspaceSessionRequest>().crowdclipSession = {
+            workspaceId,
+            instagramAccountId,
+            expiresAt: new Date('2026-09-01T00:00:00.000Z'),
+          };
+          return true;
+        },
+      })
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -59,17 +76,18 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  it('/clips (GET)', () => {
-    return request(app.getHttpServer()).get('/clips').expect(200).expect({
+  it('/clips returns clips from the connected workspace (GET)', async () => {
+    await request(app.getHttpServer()).get('/clips').expect(200).expect({
       clips: [],
     });
+    expect(listRecentForReview).toHaveBeenCalledWith(20, workspaceId);
   });
 
   it('/clips rejects an invalid limit (GET)', () => {
     return request(app.getHttpServer()).get('/clips?limit=101').expect(400);
   });
 
-  it('/clips/:id/media-choice records a decision (PATCH)', () => {
+  it('/clips/:id/media-choice records a workspace-scoped decision (PATCH)', async () => {
     const clipId = '8ad85e44-af72-430c-a8ca-14db25b3e37e';
     decideMediaChoice.mockResolvedValueOnce({
       clipId,
@@ -78,7 +96,7 @@ describe('AppController (e2e)', () => {
       originalFileRequest: null,
     });
 
-    return request(app.getHttpServer())
+    await request(app.getHttpServer())
       .patch(`/clips/${clipId}/media-choice`)
       .send({ mediaChoice: 'use_instagram_story' })
       .expect(200)
@@ -88,6 +106,11 @@ describe('AppController (e2e)', () => {
         updatedAt: '2026-07-30T00:00:00.000Z',
         originalFileRequest: null,
       });
+    expect(decideMediaChoice).toHaveBeenCalledWith(
+      clipId,
+      'use_instagram_story',
+      workspaceId,
+    );
   });
 
   it('/clips/:id/media-choice rejects an invalid UUID (PATCH)', () => {

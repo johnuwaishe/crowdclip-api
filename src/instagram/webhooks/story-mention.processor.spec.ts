@@ -12,6 +12,7 @@ import { FanRow } from '../../fans/types/fan-row.type';
 import { StoryMentionProcessor } from './story-mention.processor';
 import { WebhookEventRow } from './types/webhook-event-row.type';
 import { WebhookEventsRepository } from './webhook-events.repository';
+import { WorkspacesRepository } from '../../workspaces/workspaces.repository';
 
 describe('StoryMentionProcessor', () => {
   const now = new Date('2026-07-29T17:00:00.000Z');
@@ -47,6 +48,9 @@ describe('StoryMentionProcessor', () => {
   };
   const mediaAssetsRepository = {
     findOrCreate: jest.fn(),
+  };
+  const workspacesRepository = {
+    findRoutingByRecipientId: jest.fn(),
   };
 
   const event: WebhookEventRow = {
@@ -90,6 +94,8 @@ describe('StoryMentionProcessor', () => {
     id: 'clip-id',
     fan_id: fan.id,
     source_webhook_event_id: event.id,
+    instagram_account_id: 'instagram-account-id',
+    show_id: 'show-id',
     media_choice: 'undecided',
     mentioned_at: now,
     created_at: now,
@@ -131,6 +137,7 @@ describe('StoryMentionProcessor', () => {
       fansRepository as unknown as FansRepository,
       clipsRepository as unknown as ClipsRepository,
       mediaAssetsRepository as unknown as MediaAssetsRepository,
+      workspacesRepository as unknown as WorkspacesRepository,
     );
   });
 
@@ -149,6 +156,11 @@ describe('StoryMentionProcessor', () => {
 
   it('creates the fan, clip, and Instagram asset in one transaction', async () => {
     webhookEventsRepository.claimNextPendingByType.mockResolvedValueOnce(event);
+    workspacesRepository.findRoutingByRecipientId.mockResolvedValueOnce({
+      instagram_account_id: clip.instagram_account_id,
+      workspace_id: 'workspace-id',
+      active_show_id: clip.show_id,
+    });
     fansRepository.findOrCreate.mockResolvedValueOnce(fan);
     clipsRepository.findOrCreate.mockResolvedValueOnce(clip);
     mediaAssetsRepository.findOrCreate.mockResolvedValueOnce(mediaAsset);
@@ -173,6 +185,8 @@ describe('StoryMentionProcessor', () => {
       {
         fanId: fan.id,
         sourceWebhookEventId: event.id,
+        instagramAccountId: clip.instagram_account_id,
+        showId: clip.show_id,
         mentionedAt: event.occurred_at,
       },
       transaction,
@@ -189,6 +203,53 @@ describe('StoryMentionProcessor', () => {
       event.id,
       transaction,
     );
+  });
+
+  it('keeps a clip in the workspace inbox when no show is active', async () => {
+    webhookEventsRepository.claimNextPendingByType.mockResolvedValueOnce(event);
+    workspacesRepository.findRoutingByRecipientId.mockResolvedValueOnce({
+      instagram_account_id: clip.instagram_account_id,
+      workspace_id: 'workspace-id',
+      active_show_id: null,
+    });
+    fansRepository.findOrCreate.mockResolvedValueOnce(fan);
+    clipsRepository.findOrCreate.mockResolvedValueOnce({
+      ...clip,
+      show_id: null,
+    });
+    mediaAssetsRepository.findOrCreate.mockResolvedValueOnce(mediaAsset);
+    webhookEventsRepository.markProcessed.mockResolvedValueOnce({
+      ...event,
+      status: 'processed',
+    });
+
+    await expect(processor.processNext()).resolves.toMatchObject({
+      status: 'processed',
+      clipId: clip.id,
+    });
+    expect(clipsRepository.findOrCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        instagramAccountId: clip.instagram_account_id,
+        showId: null,
+      }),
+      transaction,
+    );
+  });
+
+  it('permanently rejects a webhook for an unknown Instagram recipient', async () => {
+    webhookEventsRepository.claimNextPendingByType.mockResolvedValueOnce(event);
+    workspacesRepository.findRoutingByRecipientId.mockResolvedValueOnce(null);
+    webhookEventsRepository.markFailed.mockResolvedValueOnce({
+      ...event,
+      status: 'failed',
+    });
+
+    await expect(processor.processNext()).resolves.toEqual({
+      status: 'failed',
+      eventId: event.id,
+      error: 'Instagram webhook recipient is not connected to a workspace',
+    });
+    expect(fansRepository.findOrCreate).not.toHaveBeenCalled();
   });
 
   it('marks an event failed when its payload has no media URL', async () => {

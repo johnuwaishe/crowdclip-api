@@ -51,12 +51,14 @@ export class ClipsService {
   async decideMediaChoice(
     clipId: string,
     mediaChoice: ArtistClipMediaChoice,
+    workspaceId?: string,
   ): Promise<ClipDecisionResult> {
     const result = await this.databaseService.withTransaction(
       async (transaction) => {
         const clip = await this.clipsRepository.findByIdForUpdate(
           clipId,
           transaction,
+          workspaceId,
         );
 
         if (!clip) {
@@ -82,8 +84,14 @@ export class ClipsService {
     return result;
   }
 
-  async listRecentForReview(limit: number): Promise<ClipReview[]> {
-    const rows = await this.clipsRepository.listRecentForReview(limit);
+  async listRecentForReview(
+    limit: number,
+    workspaceId: string,
+  ): Promise<ClipReview[]> {
+    const rows = await this.clipsRepository.listRecentForReview(
+      limit,
+      workspaceId,
+    );
     const clipsById = new Map<string, ClipReview>();
     const previewTargets = new Map<string, PreviewTarget>();
 

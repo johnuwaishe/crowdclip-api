@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AudioAnalysisModule } from '../audio-analysis/audio-analysis.module';
+import { WorkspacesModule } from '../workspaces/workspaces.module';
 import { FansRepository } from '../fans/fans.repository';
 import { MediaStorageModule } from '../media/media-storage.module';
 import { ClipsController } from './clips.controller';
@@ -13,7 +14,7 @@ import { OriginalFileUploadsService } from './original-file-uploads.service';
 import { OriginalFileUploadTokenGuard } from './original-file-upload-token.guard';
 
 @Module({
-  imports: [AudioAnalysisModule, MediaStorageModule],
+  imports: [AudioAnalysisModule, MediaStorageModule, WorkspacesModule],
   controllers: [ClipsController, OriginalFileUploadsController],
   providers: [
     FansRepository,

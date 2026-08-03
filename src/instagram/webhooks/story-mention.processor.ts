@@ -8,8 +8,11 @@ import {
   normalizeInstagramStoryMention,
 } from './instagram-story-mention.parser';
 import { WebhookEventsRepository } from './webhook-events.repository';
+import { WorkspacesRepository } from '../../workspaces/workspaces.repository';
 
 const MAX_ERROR_MESSAGE_LENGTH = 2_000;
+
+export class UnknownInstagramRecipientError extends Error {}
 
 export type StoryMentionProcessingResult =
   | { status: 'idle' }
@@ -35,6 +38,7 @@ export class StoryMentionProcessor {
     private readonly fansRepository: FansRepository,
     private readonly clipsRepository: ClipsRepository,
     private readonly mediaAssetsRepository: MediaAssetsRepository,
+    private readonly workspacesRepository: WorkspacesRepository,
   ) {}
 
   async processNext(
@@ -55,6 +59,16 @@ export class StoryMentionProcessor {
 
       const result = await this.databaseService.withTransaction(
         async (transaction) => {
+          const routing =
+            await this.workspacesRepository.findRoutingByRecipientId(
+              event.recipient_id,
+              transaction,
+            );
+          if (!routing) {
+            throw new UnknownInstagramRecipientError(
+              'Instagram webhook recipient is not connected to a workspace',
+            );
+          }
           const fan = await this.fansRepository.findOrCreate(
             {
               instagramScopedUserId: event.sender_id,
@@ -66,6 +80,8 @@ export class StoryMentionProcessor {
             {
               fanId: fan.id,
               sourceWebhookEventId: event.id,
+              instagramAccountId: routing.instagram_account_id,
+              showId: routing.active_show_id,
               mentionedAt: event.occurred_at,
             },
             transaction,
@@ -116,7 +132,8 @@ export class StoryMentionProcessor {
       );
 
       const releasedEvent =
-        error instanceof InvalidInstagramStoryMentionError
+        error instanceof InvalidInstagramStoryMentionError ||
+        error instanceof UnknownInstagramRecipientError
           ? await this.webhookEventsRepository.markFailed(
               event.id,
               errorMessage,

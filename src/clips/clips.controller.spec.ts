@@ -3,6 +3,11 @@ import { ClipsController } from './clips.controller';
 import { ClipsService } from './clips.service';
 
 describe('ClipsController', () => {
+  const session = {
+    instagramAccountId: '10000000-0000-4000-8000-000000000001',
+    workspaceId: '20000000-0000-4000-8000-000000000002',
+    expiresAt: new Date('2026-09-01T00:00:00.000Z'),
+  };
   const listRecentForReview = jest.fn();
   const decideMediaChoice = jest.fn();
   const clipsService = {
@@ -18,17 +23,19 @@ describe('ClipsController', () => {
     listRecentForReview.mockResolvedValueOnce([]);
     const controller = new ClipsController(clipsService);
 
-    await expect(controller.listRecent()).resolves.toEqual({ clips: [] });
-    expect(listRecentForReview).toHaveBeenCalledWith(20);
+    await expect(controller.listRecent(session)).resolves.toEqual({
+      clips: [],
+    });
+    expect(listRecentForReview).toHaveBeenCalledWith(20, session.workspaceId);
   });
 
   it('accepts a caller-supplied limit', async () => {
     listRecentForReview.mockResolvedValueOnce([]);
     const controller = new ClipsController(clipsService);
 
-    await controller.listRecent('50');
+    await controller.listRecent(session, '50');
 
-    expect(listRecentForReview).toHaveBeenCalledWith(50);
+    expect(listRecentForReview).toHaveBeenCalledWith(50, session.workspaceId);
   });
 
   it.each(['0', '101', '1.5', '-1', 'not-a-number'])(
@@ -36,9 +43,9 @@ describe('ClipsController', () => {
     async (limit) => {
       const controller = new ClipsController(clipsService);
 
-      await expect(controller.listRecent(limit)).rejects.toBeInstanceOf(
-        BadRequestException,
-      );
+      await expect(
+        controller.listRecent(session, limit),
+      ).rejects.toBeInstanceOf(BadRequestException);
       expect(listRecentForReview).not.toHaveBeenCalled();
     },
   );
@@ -56,9 +63,13 @@ describe('ClipsController', () => {
       const controller = new ClipsController(clipsService);
 
       await expect(
-        controller.decideMediaChoice('clip-id', { mediaChoice }),
+        controller.decideMediaChoice(session, 'clip-id', { mediaChoice }),
       ).resolves.toBe(decision);
-      expect(decideMediaChoice).toHaveBeenCalledWith('clip-id', mediaChoice);
+      expect(decideMediaChoice).toHaveBeenCalledWith(
+        'clip-id',
+        mediaChoice,
+        session.workspaceId,
+      );
     },
   );
 
@@ -72,7 +83,7 @@ describe('ClipsController', () => {
     const controller = new ClipsController(clipsService);
 
     await expect(
-      controller.decideMediaChoice('clip-id', body),
+      controller.decideMediaChoice(session, 'clip-id', body),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(decideMediaChoice).not.toHaveBeenCalled();
   });

@@ -70,6 +70,8 @@ describe('ClipsService', () => {
     id: 'clip-id',
     fan_id: 'fan-id',
     source_webhook_event_id: 'event-id',
+    instagram_account_id: 'instagram-account-id',
+    show_id: 'show-id',
     media_choice: 'undecided',
     mentioned_at: clipCreatedAt,
     created_at: clipCreatedAt,
@@ -167,7 +169,9 @@ describe('ClipsService', () => {
     );
     const service = createService();
 
-    await expect(service.listRecentForReview(20)).resolves.toEqual([
+    await expect(
+      service.listRecentForReview(20, 'workspace-id'),
+    ).resolves.toEqual([
       {
         id: 'clip-id',
         mediaChoice: 'undecided',
@@ -204,7 +208,7 @@ describe('ClipsService', () => {
       },
     ]);
 
-    expect(listRecentForReview).toHaveBeenCalledWith(20);
+    expect(listRecentForReview).toHaveBeenCalledWith(20, 'workspace-id');
     expect(createSignedUrl).toHaveBeenCalledTimes(1);
     expect(createSignedUrl).toHaveBeenCalledWith({
       bucket: 'clip-media',
@@ -230,7 +234,7 @@ describe('ClipsService', () => {
     ]);
     const service = createService();
 
-    const clips = await service.listRecentForReview(20);
+    const clips = await service.listRecentForReview(20, 'workspace-id');
 
     expect(clips[0].mediaAssets).toEqual([]);
     expect(createSignedUrl).not.toHaveBeenCalled();
@@ -241,9 +245,9 @@ describe('ClipsService', () => {
     createSignedUrl.mockRejectedValueOnce(new Error('Storage unavailable'));
     const service = createService();
 
-    await expect(service.listRecentForReview(20)).rejects.toBeInstanceOf(
-      ServiceUnavailableException,
-    );
+    await expect(
+      service.listRecentForReview(20, 'workspace-id'),
+    ).rejects.toBeInstanceOf(ServiceUnavailableException);
   });
 
   it('chooses a stored Instagram story in one transaction', async () => {
@@ -257,7 +261,7 @@ describe('ClipsService', () => {
     const service = createService();
 
     await expect(
-      service.decideMediaChoice(clip.id, 'use_instagram_story'),
+      service.decideMediaChoice(clip.id, 'use_instagram_story', 'workspace-id'),
     ).resolves.toEqual({
       clipId: clip.id,
       mediaChoice: 'use_instagram_story',
@@ -265,7 +269,11 @@ describe('ClipsService', () => {
       originalFileRequest: null,
     });
 
-    expect(findByIdForUpdate).toHaveBeenCalledWith(clip.id, transaction);
+    expect(findByIdForUpdate).toHaveBeenCalledWith(
+      clip.id,
+      transaction,
+      'workspace-id',
+    );
     expect(findStoredByClipAndType).toHaveBeenCalledWith(
       clip.id,
       'instagram_story',
@@ -296,7 +304,11 @@ describe('ClipsService', () => {
     const service = createService();
 
     await expect(
-      service.decideMediaChoice(clip.id, 'request_fan_original'),
+      service.decideMediaChoice(
+        clip.id,
+        'request_fan_original',
+        'workspace-id',
+      ),
     ).resolves.toEqual({
       clipId: clip.id,
       mediaChoice: 'request_fan_original',
@@ -339,6 +351,7 @@ describe('ClipsService', () => {
     const result = await service.decideMediaChoice(
       clip.id,
       'request_fan_original',
+      'workspace-id',
     );
 
     expect(result.originalFileRequest?.uploadPath).toBe(
@@ -367,6 +380,7 @@ describe('ClipsService', () => {
     const result = await service.decideMediaChoice(
       clip.id,
       'request_fan_original',
+      'workspace-id',
     );
 
     expect(result.originalFileRequest?.uploadPath).toBeNull();
@@ -381,7 +395,11 @@ describe('ClipsService', () => {
     const service = createService();
 
     await expect(
-      service.decideMediaChoice(clip.id, 'request_fan_original'),
+      service.decideMediaChoice(
+        clip.id,
+        'request_fan_original',
+        'workspace-id',
+      ),
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
@@ -391,7 +409,7 @@ describe('ClipsService', () => {
     const service = createService();
 
     await expect(
-      service.decideMediaChoice(clip.id, 'use_instagram_story'),
+      service.decideMediaChoice(clip.id, 'use_instagram_story', 'workspace-id'),
     ).rejects.toBeInstanceOf(ConflictException);
     expect(updateMediaChoice).not.toHaveBeenCalled();
   });
@@ -401,7 +419,7 @@ describe('ClipsService', () => {
     const service = createService();
 
     await expect(
-      service.decideMediaChoice(clip.id, 'use_instagram_story'),
+      service.decideMediaChoice(clip.id, 'use_instagram_story', 'workspace-id'),
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 });

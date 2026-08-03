@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClipsService } from './clips.service';
 import {
@@ -14,32 +15,45 @@ import {
   ClipDecisionResult,
 } from './types/clip-decision.type';
 import { ClipReview } from './types/clip-review.type';
+import { WorkspaceSessionGuard } from '../workspaces/workspace-session.guard';
+import { CurrentWorkspaceSession } from '../workspaces/current-workspace-session.decorator';
+import type { WorkspaceSession } from '../workspaces/workspace-session.service';
 
 const DEFAULT_CLIP_LIMIT = 20;
 const MAX_CLIP_LIMIT = 100;
 
 @Controller('clips')
+@UseGuards(WorkspaceSessionGuard)
 export class ClipsController {
   constructor(private readonly clipsService: ClipsService) {}
 
   @Get()
   async listRecent(
+    @CurrentWorkspaceSession() session: WorkspaceSession,
     @Query('limit') rawLimit?: string,
   ): Promise<{ clips: ClipReview[] }> {
     const limit = this.parseLimit(rawLimit);
-    const clips = await this.clipsService.listRecentForReview(limit);
+    const clips = await this.clipsService.listRecentForReview(
+      limit,
+      session.workspaceId,
+    );
 
     return { clips };
   }
 
   @Patch(':clipId/media-choice')
   async decideMediaChoice(
+    @CurrentWorkspaceSession() session: WorkspaceSession,
     @Param('clipId', new ParseUUIDPipe({ version: '4' })) clipId: string,
     @Body() body: unknown,
   ): Promise<ClipDecisionResult> {
     const mediaChoice = this.parseMediaChoice(body);
 
-    return this.clipsService.decideMediaChoice(clipId, mediaChoice);
+    return this.clipsService.decideMediaChoice(
+      clipId,
+      mediaChoice,
+      session.workspaceId,
+    );
   }
 
   private parseMediaChoice(body: unknown): ArtistClipMediaChoice {
