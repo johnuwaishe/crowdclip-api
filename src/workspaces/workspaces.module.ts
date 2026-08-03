@@ -7,9 +7,14 @@ import { WorkspaceController } from './workspace.controller';
 import { WorkspaceSessionGuard } from './workspace-session.guard';
 import { WorkspaceSessionService } from './workspace-session.service';
 import { WorkspacesRepository } from './workspaces.repository';
+import { AuthModule } from '../auth/auth.module';
+import { AccountClaimController } from './account-claim.controller';
+import { AccountClaimService } from './account-claim.service';
+import { WorkspaceAccessGuard } from './workspace-access.guard';
 
 @Module({
-  controllers: [WorkspaceController, ShowsController],
+  imports: [AuthModule],
+  controllers: [WorkspaceController, ShowsController, AccountClaimController],
   providers: [
     WorkspacesRepository,
     ShowsRepository,
@@ -17,6 +22,8 @@ import { WorkspacesRepository } from './workspaces.repository';
     InstagramTokenCipherService,
     WorkspaceSessionService,
     WorkspaceSessionGuard,
+    AccountClaimService,
+    WorkspaceAccessGuard,
   ],
   exports: [
     WorkspacesRepository,
@@ -24,6 +31,7 @@ import { WorkspacesRepository } from './workspaces.repository';
     InstagramTokenCipherService,
     WorkspaceSessionService,
     WorkspaceSessionGuard,
+    WorkspaceAccessGuard,
   ],
 })
 export class WorkspacesModule {}

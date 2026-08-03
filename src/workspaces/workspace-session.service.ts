@@ -47,6 +47,23 @@ export class WorkspaceSessionService {
     };
   }
 
+  fromCookieHeader(header: string | undefined): WorkspaceSession | null {
+    if (!header) return null;
+    for (const part of header.split(';')) {
+      const separator = part.indexOf('=');
+      if (separator < 0) continue;
+      if (part.slice(0, separator).trim() !== this.cookieName) continue;
+      try {
+        return this.verify(
+          decodeURIComponent(part.slice(separator + 1).trim()),
+        );
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+
   private sign(value: string): string {
     const secret = this.configService.getOrThrow<string>(
       'CROWDCLIP_SESSION_SECRET',

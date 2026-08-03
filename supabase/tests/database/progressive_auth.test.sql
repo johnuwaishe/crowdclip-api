@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS pgtap WITH SCHEMA extensions;
 
 SET LOCAL search_path = public, extensions;
 
-SELECT plan(16);
+SELECT plan(19);
 
 SELECT has_table(
     'public',
@@ -33,6 +33,16 @@ SELECT ok(
           AND indexname = 'user_profiles_username_lower_key'
     ),
     'CrowdClip usernames have a case-insensitive unique index'
+);
+
+SELECT ok(
+    EXISTS (
+        SELECT 1
+        FROM pg_indexes
+        WHERE schemaname = 'public'
+          AND indexname = 'workspace_memberships_single_owner_key'
+    ),
+    'each workspace has at most one verified owner'
 );
 
 SELECT ok(
@@ -122,6 +132,32 @@ SELECT lives_ok(
     'a verified auth user can receive a minimal CrowdClip profile'
 );
 
+SELECT lives_ok(
+    $$
+        INSERT INTO auth.users (
+            id,
+            instance_id,
+            aud,
+            role,
+            email,
+            encrypted_password,
+            created_at,
+            updated_at
+        )
+        VALUES (
+            '10000000-0000-4000-8000-000000000002',
+            '00000000-0000-0000-0000-000000000000',
+            'authenticated',
+            'authenticated',
+            'second-owner@example.com',
+            '',
+            NOW(),
+            NOW()
+        )
+    $$,
+    'a second verified auth user can be created for ownership conflicts'
+);
+
 SELECT throws_ok(
     $$
         INSERT INTO public.user_profiles (
@@ -158,6 +194,24 @@ SELECT lives_ok(
         )
     $$,
     'a verified user can own the provisional workspace'
+);
+
+SELECT throws_ok(
+    $$
+        INSERT INTO public.workspace_memberships (
+            workspace_id,
+            user_id,
+            role
+        )
+        VALUES (
+            '20000000-0000-4000-8000-000000000002',
+            '10000000-0000-4000-8000-000000000002',
+            'owner'
+        )
+    $$,
+    '23505',
+    NULL,
+    'a different verified user cannot also own the workspace'
 );
 
 SELECT throws_ok(
