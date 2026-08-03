@@ -13,10 +13,18 @@ import { ClipAudioAnalysesRepository } from './clip-audio-analyses.repository';
 import { ConcertAudioAnalyzerClient } from './concert-audio-analyzer.client';
 import { SameMomentGroupingService } from './same-moment-grouping.service';
 import { WorkspacesModule } from '../workspaces/workspaces.module';
+import { ShowTimelineController } from './show-timeline.controller';
+import { ShowTimelineRepository } from './show-timeline.repository';
+import { ShowTimelineService } from './show-timeline.service';
+import { ShowClipAssignmentService } from './show-clip-assignment.service';
 
 @Module({
   imports: [MediaStorageModule, WorkspacesModule],
-  controllers: [AudioReferenceCataloguesController, AudioAnalysisController],
+  controllers: [
+    AudioReferenceCataloguesController,
+    AudioAnalysisController,
+    ShowTimelineController,
+  ],
   providers: [
     AudioAnalysisConfig,
     AudioAnalyzerProcessRunner,
@@ -28,6 +36,9 @@ import { WorkspacesModule } from '../workspaces/workspaces.module';
     AudioAnalysisProcessor,
     AudioAnalysisWorker,
     SameMomentGroupingService,
+    ShowTimelineRepository,
+    ShowTimelineService,
+    ShowClipAssignmentService,
   ],
   exports: [ClipAudioAnalysesRepository, SameMomentGroupingService],
 })
