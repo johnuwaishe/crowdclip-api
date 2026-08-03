@@ -15,6 +15,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
+    "test:auth:local": "ts-node scripts/test-progressive-auth-local.ts",
     "test:db": "supabase test db --local supabase/tests/database",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
