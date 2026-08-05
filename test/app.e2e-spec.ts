@@ -9,6 +9,8 @@ import { OriginalFileUploadTokenGuard } from './../src/clips/original-file-uploa
 import { DatabaseService } from './../src/database/database.service';
 import { WorkspaceAccessGuard } from './../src/workspaces/workspace-access.guard';
 import { WorkspaceAccessRequest } from './../src/workspaces/current-workspace-access.decorator';
+import { setupOpenApi } from './../src/openapi';
+import type { OpenAPIObject } from '@nestjs/swagger';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication<App>;
@@ -69,7 +71,35 @@ describe('AppController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    setupOpenApi(app);
     await app.init();
+  });
+
+  it('/docs serves the interactive Swagger UI (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/docs')
+      .expect(200)
+      .expect('content-type', /html/);
+  });
+
+  it('/docs-json serves the OpenAPI document (GET)', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/docs-json')
+      .expect(200)
+      .expect('content-type', /json/);
+
+    const document = response.body as unknown as OpenAPIObject;
+
+    expect(document.info).toMatchObject({
+      title: 'CrowdClip API',
+      version: '0.0.1',
+    });
+    expect(document.paths).toHaveProperty('/shows/{showId}/timeline');
+    expect(document.paths).toHaveProperty('/uploads/original/{token}');
+    expect(document.components?.securitySchemes).toHaveProperty('supabase');
+    expect(document.components?.securitySchemes).toHaveProperty(
+      'crowdclip-session',
+    );
   });
 
   it('/health (GET)', () => {

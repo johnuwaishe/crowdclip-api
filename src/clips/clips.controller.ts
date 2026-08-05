@@ -9,6 +9,15 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ClipsService } from './clips.service';
 import {
   ArtistClipMediaChoice,
@@ -22,12 +31,24 @@ import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type'
 const DEFAULT_CLIP_LIMIT = 20;
 const MAX_CLIP_LIMIT = 100;
 
+@ApiTags('Clips')
+@ApiBearerAuth('supabase')
+@ApiCookieAuth('crowdclip-session')
 @Controller('clips')
 @UseGuards(WorkspaceAccessGuard)
 export class ClipsController {
   constructor(private readonly clipsService: ClipsService) {}
 
   @Get()
+  @ApiOperation({ summary: 'List recent clips for artist review' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    minimum: 1,
+    maximum: 100,
+    example: 20,
+  })
   async listRecent(
     @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Query('limit') rawLimit?: string,
@@ -42,6 +63,20 @@ export class ClipsController {
   }
 
   @Patch(':clipId/media-choice')
+  @ApiOperation({ summary: 'Choose story media or request the fan original' })
+  @ApiParam({ name: 'clipId', format: 'uuid' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['mediaChoice'],
+      properties: {
+        mediaChoice: {
+          type: 'string',
+          enum: ['use_instagram_story', 'request_fan_original'],
+        },
+      },
+    },
+  })
   async decideMediaChoice(
     @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('clipId', new ParseUUIDPipe({ version: '4' })) clipId: string,

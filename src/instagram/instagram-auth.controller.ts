@@ -7,6 +7,15 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiFoundResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
 import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
@@ -16,6 +25,7 @@ import { WorkspacesRepository } from '../workspaces/workspaces.repository';
 import { InstagramConnectionService } from './instagram-connection.service';
 import { InstagramOAuthStateService } from './instagram-oauth-state.service';
 
+@ApiTags('Instagram connection')
 @Controller('auth/instagram')
 export class InstagramAuthController {
   constructor(
@@ -26,6 +36,10 @@ export class InstagramAuthController {
   ) {}
 
   @Get('start')
+  @ApiOperation({ summary: 'Start Instagram OAuth' })
+  @ApiFoundResponse({
+    description: 'Redirects the browser to Meta authorization.',
+  })
   start(@Res({ passthrough: true }) response: Response): void {
     const state = this.oauthState.issue();
     response.cookie(this.oauthState.cookieName, state, {
@@ -39,6 +53,16 @@ export class InstagramAuthController {
   }
 
   @Get('callback')
+  @ApiOperation({
+    summary: 'Complete Instagram OAuth and issue a workspace session',
+  })
+  @ApiQuery({ name: 'code', required: false, type: String })
+  @ApiQuery({ name: 'state', required: false, type: String })
+  @ApiQuery({ name: 'error', required: false, type: String })
+  @ApiQuery({ name: 'error_description', required: false, type: String })
+  @ApiBadRequestResponse({
+    description: 'OAuth failed or state validation failed.',
+  })
   async handleCallback(
     @Query('code') code?: string,
     @Query('state') state?: string,
@@ -110,6 +134,9 @@ export class InstagramAuthController {
   }
 
   @Post('disconnect')
+  @ApiOperation({ summary: 'Disconnect Instagram from the current workspace' })
+  @ApiBearerAuth('supabase')
+  @ApiCookieAuth('crowdclip-session')
   @UseGuards(WorkspaceAccessGuard)
   async disconnect(
     @CurrentWorkspaceAccess() session: WorkspaceAccess,

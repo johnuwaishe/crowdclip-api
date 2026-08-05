@@ -1,15 +1,25 @@
 import { Controller, Get, NotFoundException, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentWorkspaceAccess } from './current-workspace-access.decorator';
 import type { WorkspaceAccess } from './types/workspace-access.type';
 import { WorkspaceAccessGuard } from './workspace-access.guard';
 import { WorkspacesRepository } from './workspaces.repository';
 
+@ApiTags('Workspace')
+@ApiBearerAuth('supabase')
+@ApiCookieAuth('crowdclip-session')
 @Controller('workspace')
 @UseGuards(WorkspaceAccessGuard)
 export class WorkspaceController {
   constructor(private readonly workspacesRepository: WorkspacesRepository) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get the current workspace and connection state' })
   async getCurrent(@CurrentWorkspaceAccess() session: WorkspaceAccess) {
     const result = await this.workspacesRepository.getWorkspace(
       session.workspaceId,

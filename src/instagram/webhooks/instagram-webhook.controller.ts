@@ -15,7 +15,15 @@ import { MetaSignatureService } from '../meta-signature.service';
 import type { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { InvalidInstagramWebhookPayloadError } from './instagram-webhook-payload.parser';
+import {
+  ApiBody,
+  ApiHeader,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Instagram webhooks')
 @Controller('webhooks/instagram')
 export class InstagramWebhookController {
   constructor(
@@ -25,6 +33,10 @@ export class InstagramWebhookController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Verify the webhook endpoint for Meta' })
+  @ApiQuery({ name: 'hub.mode', enum: ['subscribe'] })
+  @ApiQuery({ name: 'hub.challenge', type: String })
+  @ApiQuery({ name: 'hub.verify_token', type: String })
   verifyWebhook(
     @Query('hub.mode') mode: string,
     @Query('hub.challenge') challenge: string,
@@ -46,6 +58,13 @@ export class InstagramWebhookController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Receive a signed Instagram webhook event' })
+  @ApiHeader({
+    name: 'x-hub-signature-256',
+    required: true,
+    description: 'Meta HMAC signature over the raw request body.',
+  })
+  @ApiBody({ schema: { type: 'object', additionalProperties: true } })
   async receiveWebhook(
     @Req() req: RawBodyRequest<Request>,
     @Headers('x-hub-signature-256') signature: string | undefined,

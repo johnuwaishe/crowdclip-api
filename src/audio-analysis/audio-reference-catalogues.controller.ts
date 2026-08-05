@@ -10,6 +10,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AudioReferenceCataloguesService } from './audio-reference-catalogues.service';
 import type {
   AudioReferenceCatalogueView,
@@ -23,6 +32,9 @@ import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type'
 
 const MAX_MULTIPART_REFERENCE_BYTES = 100 * 1024 * 1024;
 
+@ApiTags('Reference tracks')
+@ApiBearerAuth('supabase')
+@ApiCookieAuth('crowdclip-session')
 @Controller('shows/:showId/reference-tracks')
 @UseGuards(WorkspaceAccessGuard)
 export class AudioReferenceCataloguesController {
@@ -31,6 +43,8 @@ export class AudioReferenceCataloguesController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: "List a show's reference tracks" })
+  @ApiParam({ name: 'showId', format: 'uuid' })
   get(
     @CurrentWorkspaceAccess() session: WorkspaceAccess,
     @Param('showId') showId: string,
@@ -39,6 +53,20 @@ export class AudioReferenceCataloguesController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Upload a reference recording for one song' })
+  @ApiParam({ name: 'showId', format: 'uuid' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['title', 'file'],
+      properties: {
+        title: { type: 'string', maxLength: 300 },
+        artistName: { type: 'string', maxLength: 300 },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
   @HttpCode(200)
   @UseInterceptors(
     FileInterceptor('file', {

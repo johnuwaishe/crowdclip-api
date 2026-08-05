@@ -61,6 +61,24 @@ The local Supabase URL is normally `http://127.0.0.1:54321`; its port is
 configured in [`supabase/config.toml`](./supabase/config.toml). The URL is
 discovered at startup rather than copied into `.env.local`.
 
+## API documentation
+
+With the API running, open the interactive Swagger documentation at:
+
+```text
+http://localhost:3000/docs
+```
+
+The generated OpenAPI JSON document is available at:
+
+```text
+http://localhost:3000/docs-json
+```
+
+Protected workspace endpoints accept either a verified Supabase Bearer token
+or the provisional `crowdclip_session` cookie issued by Instagram OAuth. The
+account-claim endpoint requires both credentials.
+
 For a hosted environment, set `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` using the hosting provider's secret manager. Never
 commit the service-role key.

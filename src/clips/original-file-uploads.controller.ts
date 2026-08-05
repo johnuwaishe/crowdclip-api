@@ -9,6 +9,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
   OriginalFileMultipartUpload,
   OriginalFileUploadResult,
   OriginalFileUploadsService,
@@ -17,6 +24,7 @@ import { OriginalFileUploadTokenGuard } from './original-file-upload-token.guard
 
 const MAX_MULTIPART_FILE_BYTES = 50 * 1024 * 1024;
 
+@ApiTags('Fan uploads')
 @Controller('uploads/original')
 export class OriginalFileUploadsController {
   constructor(
@@ -24,6 +32,23 @@ export class OriginalFileUploadsController {
   ) {}
 
   @Post(':token')
+  @ApiOperation({
+    summary: 'Upload a fan original using a signed request token',
+  })
+  @ApiParam({
+    name: 'token',
+    description: 'Signed token from the original-file request link.',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
   @HttpCode(200)
   @UseGuards(OriginalFileUploadTokenGuard)
   @UseInterceptors(
