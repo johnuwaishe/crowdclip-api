@@ -1,19 +1,24 @@
 {
   "name": "crowdclip-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Backend API for collecting and aligning fan-shot concert clips.",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.28.2",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:local": "zsh ./scripts/start-local.zsh",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test:auth:local": "ts-node scripts/test-progressive-auth-local.ts",
     "test:db": "supabase test db --local supabase/tests/database",

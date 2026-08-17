@@ -17,6 +17,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
+import { browserCookieOptions, webAppUrl } from '../config/public-urls';
 import { CurrentWorkspaceAccess } from '../workspaces/current-workspace-access.decorator';
 import type { WorkspaceAccess } from '../workspaces/types/workspace-access.type';
 import { WorkspaceAccessGuard } from '../workspaces/workspace-access.guard';
@@ -44,8 +45,7 @@ export class InstagramAuthController {
     const state = this.oauthState.issue();
     response.cookie(this.oauthState.cookieName, state, {
       httpOnly: true,
-      secure: this.secureCookies(),
-      sameSite: 'lax',
+      ...browserCookieOptions(),
       maxAge: this.oauthState.ttlSeconds * 1_000,
       path: '/auth/instagram',
     });
@@ -101,11 +101,16 @@ export class InstagramAuthController {
     });
     response?.cookie(this.sessions.cookieName, sessionToken, {
       httpOnly: true,
-      secure: this.secureCookies(),
-      sameSite: 'lax',
+      ...browserCookieOptions(),
       maxAge: this.sessions.ttlSeconds * 1_000,
       path: '/',
     });
+    const webApp = webAppUrl();
+    if (response && webApp) {
+      const nextPath = verifiedOwner ? '/dashboard' : '/auth/protect';
+      response.redirect(new URL(nextPath, `${webApp}/`).toString());
+      return;
+    }
     return {
       connected: true,
       created: connected.created,
@@ -175,9 +180,5 @@ export class InstagramAuthController {
       }
     }
     return null;
-  }
-
-  private secureCookies(): boolean {
-    return process.env.NODE_ENV === 'production';
   }
 }

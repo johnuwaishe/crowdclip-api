@@ -1,197 +1,113 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# CrowdClip API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+CrowdClip is an in-progress backend for collecting fan-shot concert clips and
+turning them into an artist-owned media timeline. It receives Instagram story
+mention webhooks, preserves temporary media in private storage, and aligns clip
+audio against reference recordings so clips from the same moment can be
+grouped together.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This repository contains the backend, database migrations, background workers,
+and audio-analysis implementation. The frontend is maintained separately.
 
-## Description
+## What is implemented
 
-CrowdClip is a NestJS API that receives Instagram webhook events, creates fan,
-clip, and media records in PostgreSQL, and copies temporary Instagram story
-media into private Supabase Storage.
+- Instagram OAuth, webhook verification, and story-mention ingestion
+- Supabase authentication with workspace-scoped access
+- PostgreSQL migrations and row-level security policies
+- Background media download and storage processing
+- Original-file request and upload-token workflows
+- Audio fingerprinting, reference-track alignment, and show timelines
+- Interactive OpenAPI documentation through Swagger
 
-## Project setup
+## Architecture
 
-```bash
-$ pnpm install
-```
-
-## Local development
-
-Docker Desktop must be running because the Supabase CLI uses Docker for the
-local database and Storage services.
-
-Start the local Supabase stack:
-
-```bash
-$ pnpm exec supabase start
-```
-
-Then start the API and both background workers:
-
-```bash
-$ pnpm start:local
-```
-
-`start:local` runs [`scripts/start-local.zsh`](./scripts/start-local.zsh). The
-script reads the local API URL and service-role key from
-`pnpm exec supabase status -o env`, exposes them to the Nest process as
-`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, and then starts the development
-server. It does not print the credentials or save them to a file, and they
-disappear when the process stops.
-
-The local Supabase URL is normally `http://127.0.0.1:54321`; its port is
-configured in [`supabase/config.toml`](./supabase/config.toml). The URL is
-discovered at startup rather than copied into `.env.local`.
-
-## API documentation
-
-With the API running, open the interactive Swagger documentation at:
+The main API is a NestJS application backed by PostgreSQL and Supabase Storage.
+Database-backed workers process webhook events, copy expiring Instagram media,
+and invoke the Python audio analyser as a child process.
 
 ```text
-http://localhost:3000/docs
+Instagram webhooks -> NestJS API -> PostgreSQL / Supabase Storage
+                              \-> background workers
+                                      \-> Python + FFmpeg audio analysis
 ```
 
-The generated OpenAPI JSON document is available at:
+The audio alignment implementation and its evaluation are documented in
+[`audio-analysis/README.md`](audio-analysis/README.md). Database migrations and
+local Supabase configuration live under [`supabase/`](supabase/).
 
-```text
-http://localhost:3000/docs-json
-```
+## Prerequisites
 
-Protected workspace endpoints accept either a verified Supabase Bearer token
-or the provisional `crowdclip_session` cookie issued by Instagram OAuth. The
-account-claim endpoint requires both credentials.
+- Node.js 20 or newer
+- pnpm 10
+- Docker Desktop (for the local Supabase stack)
+- Supabase CLI, installed through this project's dependencies
+- Python 3 and FFmpeg (only for audio analysis)
 
-For a hosted environment, set `SUPABASE_URL` and
-`SUPABASE_SERVICE_ROLE_KEY` using the hosting provider's secret manager. Never
-commit the service-role key.
+## Local setup
 
-## Clip review API
-
-List the newest clips for artist review:
+Install the JavaScript dependencies and create your local configuration:
 
 ```bash
-$ curl "http://localhost:3000/clips?limit=20"
+pnpm install
+cp .env.example .env.local
+pnpm exec supabase start
+pnpm start:local
 ```
 
-`limit` defaults to `20` and must be between `1` and `100`. The response
-includes the fan, the current media choice, and every media asset belonging to
-the clip. Stored assets receive a signed preview URL that expires after five
-minutes by default. Temporary Instagram CDN URLs, permanent Storage paths, and
-worker errors are not exposed.
+`start:local` reads the local API URL and service-role key directly from the
+Supabase CLI, exports them to the Nest process, and starts the development
+server. It does not print or persist those credentials.
 
-This MVP endpoint assumes one connected Instagram account and does not yet have
-artist authentication. Add authentication before exposing it publicly.
+The API defaults to <http://localhost:3000>. With it running, Swagger UI is at
+<http://localhost:3000/docs> and the OpenAPI document is at
+<http://localhost:3000/docs-json>.
 
-Record the artist's decision after reviewing a clip:
+To exercise the Instagram integration, create a Meta app, configure its OAuth
+and webhook callbacks, and add its credentials to `.env.local`. Meta must be
+able to reach the callback endpoints over HTTPS. See
+[`.env.example`](.env.example) for every setting and its purpose. Never commit
+`.env`, `.env.local`, Meta credentials, Supabase service-role keys, or signing
+secrets.
+
+### Audio analysis
+
+The API can run without the optional analyser. To enable it:
 
 ```bash
-$ curl --request PATCH \
-  --header "Content-Type: application/json" \
-  --data '{"mediaChoice":"use_instagram_story"}' \
-  "http://localhost:3000/clips/<clip-id>/media-choice"
+cd audio-analysis
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+cd ..
 ```
 
-Use `request_fan_original` instead to create an original-file request. That
-response contains an `uploadPath` for the upcoming fan upload flow. CrowdClip
-persists only its SHA-256 hash; the signed raw token can be reproduced from the
-request ID and expiry for safe delivery retries. Repeating the same decision
-returns the same unexpired path. Attempting to change an existing decision
-returns `409`.
+The default `AUDIO_ANALYSIS_PYTHON_PATH` already points to that virtual
+environment.
 
-Set `ORIGINAL_FILE_UPLOAD_TOKEN_SECRET` to a secret containing at least 32
-bytes. It signs original-file upload links and must remain stable across
-deployments.
-
-Choosing `use_instagram_story` requires the Instagram asset to have reached
-`stored`. Automatic Instagram messaging and the fan upload endpoint are the
-next phases; the returned upload path does not accept uploads yet.
-
-## Compile and run the project
+## Development checks
 
 ```bash
-# recommended local development (API plus both workers)
-$ pnpm start:local
+pnpm format:check       # formatting
+pnpm lint               # TypeScript linting
+pnpm test --runInBand --watchman=false
+pnpm build
+pnpm test:e2e --runInBand --watchman=false
+pnpm test:db            # requires the local Supabase stack
 
-# API without automatic local Storage credentials
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+cd audio-analysis
+.venv/bin/python -m pytest tests
 ```
 
-## Run tests
+The progressive authentication integration test also requires local Supabase:
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-
-# database migration tests against local Supabase
-$ pnpm run test:db
+pnpm test:auth:local
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Bug reports and focused contributions are welcome; read
+[`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request. Please
+report security issues according to [`SECURITY.md`](SECURITY.md), not in a
+public issue.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Licensed under the Apache License, Version 2.0. See [`LICENSE`](LICENSE).

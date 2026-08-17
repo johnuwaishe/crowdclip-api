@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { instagramCallbackUrl } from '../config/public-urls';
 
 @Injectable()
 export class InstagramOAuthConfig {
@@ -24,7 +25,10 @@ export class InstagramOAuthConfig {
   }
 
   get redirectUri(): string {
-    return this.configService.getOrThrow<string>('INSTAGRAM_REDIRECT_URI');
+    return (
+      this.configService.get<string>('INSTAGRAM_REDIRECT_URI')?.trim() ||
+      instagramCallbackUrl()
+    );
   }
 
   private readTimeout(): number {
