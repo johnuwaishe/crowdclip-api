@@ -19,16 +19,62 @@ and audio-analysis implementation. The frontend is maintained separately.
 - Audio fingerprinting, reference-track alignment, and show timelines
 - Interactive OpenAPI documentation through Swagger
 
+## How CrowdClip works
+
+```mermaid
+flowchart LR
+    A[Fan mentions the artist<br/>in an Instagram Story]
+    B[Instagram sends a<br/>signed webhook]
+    C[CrowdClip verifies and<br/>records the event]
+    D[The media worker preserves<br/>the temporary story clip]
+    E[The audio worker fingerprints<br/>and aligns the clip]
+    F[Clips are grouped on the<br/>matching show timeline]
+    G[The artist reviews clips and<br/>selects the best media]
+
+    A --> B --> C --> D --> E --> F --> G
+```
+
 ## Architecture
 
 The main API is a NestJS application backed by PostgreSQL and Supabase Storage.
 Database-backed workers process webhook events, copy expiring Instagram media,
 and invoke the Python audio analyser as a child process.
 
-```text
-Instagram webhooks -> NestJS API -> PostgreSQL / Supabase Storage
-                              \-> background workers
-                                      \-> Python + FFmpeg audio analysis
+```mermaid
+sequenceDiagram
+    participant IG as Instagram
+    participant API as NestJS API
+    participant DB as PostgreSQL
+    participant W as Background workers
+    participant S as Supabase Storage
+    participant A as Python analyser
+    participant UI as Artist client
+
+    Note over IG,DB: Ingest a story mention
+    IG->>API: Signed webhook event
+    API->>DB: Persist webhook event
+    W->>DB: Claim pending mention
+    W->>DB: Create fan, clip, and media records
+
+    Note over IG,S: Preserve temporary media
+    W->>IG: Download story media
+    IG-->>W: Temporary media file
+    W->>S: Store private durable copy
+    W->>DB: Record storage result
+
+    Note over DB,A: Analyse and place the clip
+    W->>DB: Claim stored clip
+    W->>S: Read clip and reference audio
+    S-->>W: Signed media streams
+    W->>A: Run fingerprint analysis
+    A-->>W: Match, offset, and confidence
+    W->>DB: Save analysis and timeline group
+
+    Note over API,UI: Review the result
+    UI->>API: Authenticated workspace request
+    API->>DB: Read clips, shows, and timeline
+    API->>S: Create signed preview URLs
+    API-->>UI: Workspace-scoped review data
 ```
 
 The audio alignment implementation and its evaluation are documented in
