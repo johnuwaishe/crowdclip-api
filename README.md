@@ -129,6 +129,31 @@ cd ..
 The default `AUDIO_ANALYSIS_PYTHON_PATH` already points to that virtual
 environment.
 
+### CA$INO demo media
+
+The read-only `GET /demo` endpoint exposes the Baby Keem CA$INO timeline demo.
+Its excerpts are stored in the private `demo-media` Supabase bucket and returned
+as short-lived signed URLs. Browser database roles cannot read the metadata
+table or Storage objects directly.
+
+Apply the migration, configure the server-side Supabase values, and explicitly
+seed the bounded excerpts:
+
+```bash
+pnpm exec supabase migration up --local
+pnpm demo:seed
+```
+
+The seed is idempotent: stored excerpts are skipped, failures are recorded per
+source, and no public endpoint can start a download. Each source is constrained
+to a 12-second range, re-encoded as MP4, capped at 25 MiB, and attributed in the
+API response. The supplied local reference MP3 is not copied into the repository
+or uploaded by this command.
+
+Current yt-dlp releases require Python 3.10 or newer. If macOS resolves
+`python3` to an older system Python, set `DEMO_MEDIA_PYTHON_PATH` to a compatible
+absolute path, such as `/opt/homebrew/bin/python3`.
+
 ## Development checks
 
 ```bash

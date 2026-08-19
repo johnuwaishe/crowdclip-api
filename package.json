@@ -22,6 +22,7 @@
     "test": "jest",
     "test:auth:local": "ts-node scripts/test-progressive-auth-local.ts",
     "test:db": "supabase test db --local supabase/tests/database",
+    "demo:seed": "ts-node scripts/seed-casino-demo.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -38,7 +39,8 @@
     "class-validator": "^0.15.1",
     "pg": "^8.22.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "youtube-dl-exec": "^3.1.12"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -67,6 +69,11 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "youtube-dl-exec"
+    ]
   },
   "jest": {
     "moduleFileExtensions": [

@@ -8,6 +8,7 @@ import { MediaModule } from './media/media.module';
 import { AudioAnalysisModule } from './audio-analysis/audio-analysis.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
 import { AuthModule } from './auth/auth.module';
+import { DemoModule } from './demo/demo.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
     WorkspacesModule,
     AudioAnalysisModule,
     MediaModule,
+    DemoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
