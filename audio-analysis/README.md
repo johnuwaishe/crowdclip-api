@@ -48,8 +48,8 @@ classifier:
   playback-speed / tempo fluctuations. For my application, recordings will come from smartphones,
   where the dominant distortion is a small constant clock-rate difference,
   not the analog wow-and-flutter of the paper's Grateful Dead dataset. So
-  `best_affine_alignment` brute-forces time-scale factors from **0.92 to
-  1.08 in steps of 0.001**, resampling the query fingerprint sequence at
+  `best_affine_alignment` brute-forces time-scale factors from **0.85 to
+  1.15 in steps of 0.001**, resampling the query fingerprint sequence at
   each scale and cross-correlating against the reference. The best (scale,
   offset) pair wins.
 - **Statistical confidence instead of a fixed BER threshold or SVM.** The
@@ -76,7 +76,7 @@ classifier:
   entirely on how well `peak_margin` / `peak_z_score` separate matches from
   noise. If same-moment grouping produces false positives, tune those
   thresholds first.
-- The scale search assumes a constant rate offset within ±8%; recordings
+- The scale search assumes a constant rate offset within ±15%; recordings
   with genuinely varying speed (analog sources) would need the paper's DTW
   stage.
 - The query must be no longer than the reference at every searched scale;
@@ -87,6 +87,8 @@ classifier:
 - `audio_analysis/media.py` — FFmpeg extraction to standard mono 5 kHz WAV.
 - `audio_analysis/fingerprint.py` — fingerprint computation and affine
   alignment (all tunable constants at the top of the file).
+- `audio_analysis/pitch.py` — high-resolution chroma comparison for pitch
+  offset estimation after time alignment.
 - `audio_analysis/analyser.py` — orchestrates extraction → fingerprint →
   alignment for one request.
 - `audio_analysis/contract.py` — JSON request/response contract with the

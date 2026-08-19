@@ -9,6 +9,7 @@ import numpy as np
 from audio_analysis.analyser import analyse
 from audio_analysis.contract import parse_request
 from audio_analysis.fingerprint import Alignment, FingerprintSequence
+from audio_analysis.pitch import PitchEstimate
 
 
 class AnalyserTests(unittest.TestCase):
@@ -44,13 +45,19 @@ class AnalyserTests(unittest.TestCase):
             "audio_analysis.analyser.best_affine_alignment",
             side_effect=alignments,
         ):
-            result = analyse(self.request, self.extract, self.fingerprint)
+            result = analyse(
+                self.request,
+                self.extract,
+                self.fingerprint,
+                lambda *_args: PitchEstimate(137.0, 0.8, 0.12),
+            )
 
         self.assertEqual(result["status"], "matched")
         self.assertEqual(result["referenceTrackId"], "track-one")
         self.assertEqual(result["referenceOffsetMs"], 88_576)
-        self.assertEqual(result["matchedDurationMs"], 15_000)
+        self.assertEqual(result["matchedDurationMs"], 14_925)
         self.assertAlmostEqual(result["peakMargin"], 0.09)
+        self.assertEqual(result["pitchShiftCents"], 137.0)
 
     def test_returns_no_match_when_another_track_is_too_close(self) -> None:
         alignments = [
@@ -61,10 +68,16 @@ class AnalyserTests(unittest.TestCase):
             "audio_analysis.analyser.best_affine_alignment",
             side_effect=alignments,
         ):
-            result = analyse(self.request, self.extract, self.fingerprint)
+            result = analyse(
+                self.request,
+                self.extract,
+                self.fingerprint,
+                lambda *_args: self.fail("pitch must not run for a rejected match"),
+            )
 
         self.assertEqual(result["status"], "no_match")
         self.assertIsNone(result["referenceTrackId"])
+        self.assertIsNone(result["pitchShiftCents"])
         self.assertAlmostEqual(result["peakMargin"], 0.01)
 
 

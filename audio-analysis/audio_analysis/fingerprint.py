@@ -97,8 +97,8 @@ def resize_fingerprints(values: np.ndarray, scale: float) -> np.ndarray:
 def best_affine_alignment(
     reference: np.ndarray,
     query: np.ndarray,
-    search_minimum_scale: float = 0.92,
-    search_maximum_scale: float = 1.08,
+    search_minimum_scale: float = 0.85,
+    search_maximum_scale: float = 1.15,
     scale_step: float = 0.001,
 ) -> Alignment:
     best_similarity = -1.0
