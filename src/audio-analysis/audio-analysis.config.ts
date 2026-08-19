@@ -19,6 +19,13 @@ export class AudioAnalysisConfig {
   readonly referenceStorageBucket: string;
   readonly pythonExecutable: string;
   readonly analyserWorkingDirectory: string;
+  readonly stemRendererEnabled: boolean;
+  readonly ffmpegExecutable: string;
+  readonly rubberbandExecutable: string;
+  readonly normalizedStemStorageBucket: string;
+  readonly referenceMixGainDb: number;
+  readonly crowdMixGainDb: number;
+  readonly stemCrossfadeMs: number;
 
   constructor(private readonly configService: ConfigService) {
     this.analyserWorkingDirectory = resolve(
@@ -89,8 +96,41 @@ export class AudioAnalysisConfig {
     this.referenceStorageBucket =
       this.configService.get<string>('AUDIO_REFERENCE_STORAGE_BUCKET') ??
       'audio-references';
+    this.ffmpegExecutable =
+      this.configService.get<string>('AUDIO_STEM_FFMPEG_PATH') ?? 'ffmpeg';
+    this.rubberbandExecutable =
+      this.configService.get<string>('AUDIO_STEM_RUBBERBAND_PATH') ??
+      'rubberband';
+    this.stemRendererEnabled = this.readBoolean(
+      'AUDIO_STEM_RENDERER_ENABLED',
+      false,
+    );
+    this.normalizedStemStorageBucket =
+      this.configService.get<string>('AUDIO_STEM_STORAGE_BUCKET') ??
+      'clip-media';
+    this.referenceMixGainDb = this.readBoundedNumber(
+      'AUDIO_STEM_REFERENCE_GAIN_DB',
+      0,
+      -60,
+      12,
+    );
+    this.crowdMixGainDb = this.readBoundedNumber(
+      'AUDIO_STEM_CROWD_GAIN_DB',
+      -4,
+      -60,
+      12,
+    );
+    this.stemCrossfadeMs = this.readBoundedInteger(
+      'AUDIO_STEM_CROSSFADE_MS',
+      250,
+      0,
+      5_000,
+    );
     if (!/^[a-z0-9][a-z0-9-]{1,62}$/.test(this.referenceStorageBucket)) {
       throw new Error('AUDIO_REFERENCE_STORAGE_BUCKET is invalid');
+    }
+    if (!/^[a-z0-9][a-z0-9-]{1,62}$/.test(this.normalizedStemStorageBucket)) {
+      throw new Error('AUDIO_STEM_STORAGE_BUCKET is invalid');
     }
 
     if (requestedEnabled && !existsSync(this.pythonExecutable)) {
@@ -123,6 +163,24 @@ export class AudioAnalysisConfig {
     if (!Number.isInteger(parsed) || parsed < minimum || parsed > maximum) {
       this.logger.warn(
         `${name} must be an integer between ${minimum} and ${maximum}; using ${fallback}`,
+      );
+      return fallback;
+    }
+    return parsed;
+  }
+
+  private readBoundedNumber(
+    name: string,
+    fallback: number,
+    minimum: number,
+    maximum: number,
+  ): number {
+    const value = this.configService.get<string>(name);
+    if (value === undefined) return fallback;
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed < minimum || parsed > maximum) {
+      this.logger.warn(
+        `${name} must be a number between ${minimum} and ${maximum}; using ${fallback}`,
       );
       return fallback;
     }

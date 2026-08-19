@@ -30,6 +30,15 @@ export class ShowTimelineRepository {
           analysis.matched_duration_ms,
           analysis.fingerprint_similarity,
           analysis.peak_margin
+          ,analysis.time_scale
+          ,analysis.pitch_shift_cents
+          ,analysis.pitch_similarity
+          ,analysis.pitch_margin
+          ,derivative.status AS normalized_audio_status
+          ,derivative.storage_bucket AS normalized_audio_storage_bucket
+          ,derivative.storage_path AS normalized_audio_storage_path
+          ,derivative.mime_type AS normalized_audio_mime_type
+          ,derivative.rendered_duration_ms AS normalized_audio_duration_ms
         FROM public.shows AS show
         JOIN public.audio_reference_catalogues AS catalogue
           ON catalogue.show_id = show.id
@@ -43,6 +52,10 @@ export class ShowTimelineRepository {
         LEFT JOIN public.media_assets AS media_asset
           ON media_asset.id = analysis.media_asset_id
          AND media_asset.status = 'stored'
+        LEFT JOIN public.clip_audio_derivatives AS derivative
+          ON derivative.analysis_id = analysis.id
+         AND derivative.kind = 'reference_normalized_stem'
+         AND derivative.algorithm_version = 'reference-normalized-v1'
         LEFT JOIN public.clips AS clip
           ON clip.id = analysis.clip_id
         LEFT JOIN public.fans AS fan

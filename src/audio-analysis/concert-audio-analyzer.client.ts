@@ -22,6 +22,9 @@ export type ConcertAudioAnalysisResult =
       secondBestSimilarity: number;
       peakMargin: number;
       timeScale: number;
+      pitchShiftCents: number;
+      pitchSimilarity: number;
+      pitchMargin: number;
       referenceOffsetMs: number;
       matchedDurationMs: number;
       error: null;
@@ -34,6 +37,9 @@ export type ConcertAudioAnalysisResult =
       secondBestSimilarity: number;
       peakMargin: number;
       timeScale: number;
+      pitchShiftCents: null;
+      pitchSimilarity: null;
+      pitchMargin: null;
       referenceOffsetMs: null;
       matchedDurationMs: null;
       error: null;
@@ -136,7 +142,13 @@ export class ConcertAudioAnalyzerClient {
         parsed.referenceOffsetMs < 0 ||
         typeof parsed.matchedDurationMs !== 'number' ||
         !Number.isSafeInteger(parsed.matchedDurationMs) ||
-        parsed.matchedDurationMs <= 0
+        parsed.matchedDurationMs <= 0 ||
+        typeof parsed.pitchShiftCents !== 'number' ||
+        !Number.isFinite(parsed.pitchShiftCents) ||
+        !this.isSignedUnitNumber(parsed.pitchSimilarity) ||
+        typeof parsed.pitchMargin !== 'number' ||
+        parsed.pitchMargin < -2 ||
+        parsed.pitchMargin > 2
       ) {
         throw new Error('Audio analyser returned an invalid match');
       }
@@ -145,7 +157,10 @@ export class ConcertAudioAnalyzerClient {
     if (
       parsed.referenceTrackId !== null ||
       parsed.referenceOffsetMs !== null ||
-      parsed.matchedDurationMs !== null
+      parsed.matchedDurationMs !== null ||
+      parsed.pitchShiftCents !== null ||
+      parsed.pitchSimilarity !== null ||
+      parsed.pitchMargin !== null
     ) {
       throw new Error('Audio analyser returned an invalid no-match result');
     }
@@ -158,5 +173,9 @@ export class ConcertAudioAnalyzerClient {
 
   private isUnitNumber(value: unknown): value is number {
     return typeof value === 'number' && value >= 0 && value <= 1;
+  }
+
+  private isSignedUnitNumber(value: unknown): value is number {
+    return typeof value === 'number' && value >= -1 && value <= 1;
   }
 }

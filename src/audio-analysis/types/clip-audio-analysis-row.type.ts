@@ -14,6 +14,9 @@ export interface ClipAudioAnalysisRow {
   second_best_similarity: number | null;
   peak_margin: number | null;
   time_scale: number | null;
+  pitch_shift_cents: number | null;
+  pitch_similarity: number | null;
+  pitch_margin: number | null;
   reference_offset_ms: string | null;
   matched_duration_ms: string | null;
   attempt_count: number;

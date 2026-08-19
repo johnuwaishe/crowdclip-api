@@ -74,6 +74,9 @@ export class AudioAnalysisProcessor {
               secondBestSimilarity: result.secondBestSimilarity,
               peakMargin: result.peakMargin,
               timeScale: result.timeScale,
+              pitchShiftCents: result.pitchShiftCents,
+              pitchSimilarity: result.pitchSimilarity,
+              pitchMargin: result.pitchMargin,
               referenceOffsetMs: result.referenceOffsetMs,
               matchedDurationMs: result.matchedDurationMs,
             })

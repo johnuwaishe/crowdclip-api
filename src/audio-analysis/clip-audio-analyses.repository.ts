@@ -18,6 +18,9 @@ export interface CompleteMatchedAnalysisInput {
   secondBestSimilarity: number;
   peakMargin: number;
   timeScale: number;
+  pitchShiftCents: number;
+  pitchSimilarity: number;
+  pitchMargin: number;
   referenceOffsetMs: number;
   matchedDurationMs: number;
 }
@@ -80,6 +83,9 @@ export class ClipAudioAnalysesRepository {
                       second_best_similarity = NULL,
                       peak_margin = NULL,
                       time_scale = NULL,
+                      pitch_shift_cents = NULL,
+                      pitch_similarity = NULL,
+                      pitch_margin = NULL,
                       reference_offset_ms = NULL,
                       matched_duration_ms = NULL,
                       attempt_count = 0,
@@ -149,6 +155,9 @@ export class ClipAudioAnalysesRepository {
                       second_best_similarity = NULL,
                       peak_margin = NULL,
                       time_scale = NULL,
+                      pitch_shift_cents = NULL,
+                      pitch_similarity = NULL,
+                      pitch_margin = NULL,
                       reference_offset_ms = NULL,
                       matched_duration_ms = NULL,
                       attempt_count = 0,
@@ -218,8 +227,11 @@ export class ClipAudioAnalysesRepository {
             second_best_similarity = $4,
             peak_margin = $5,
             time_scale = $6,
-            reference_offset_ms = $7,
-            matched_duration_ms = $8,
+            pitch_shift_cents = $7,
+            pitch_similarity = $8,
+            pitch_margin = $9,
+            reference_offset_ms = $10,
+            matched_duration_ms = $11,
             error_message = NULL,
             processing_started_at = NULL,
             next_attempt_at = NULL,
@@ -235,6 +247,9 @@ export class ClipAudioAnalysesRepository {
         input.secondBestSimilarity,
         input.peakMargin,
         input.timeScale,
+        input.pitchShiftCents,
+        input.pitchSimilarity,
+        input.pitchMargin,
         input.referenceOffsetMs,
         input.matchedDurationMs,
       ],
@@ -254,6 +269,9 @@ export class ClipAudioAnalysesRepository {
             second_best_similarity = $3,
             peak_margin = $4,
             time_scale = $5,
+            pitch_shift_cents = NULL,
+            pitch_similarity = NULL,
+            pitch_margin = NULL,
             reference_offset_ms = NULL,
             matched_duration_ms = NULL,
             error_message = NULL,
@@ -350,6 +368,9 @@ export class ClipAudioAnalysesRepository {
             second_best_similarity = NULL,
             peak_margin = NULL,
             time_scale = NULL,
+            pitch_shift_cents = NULL,
+            pitch_similarity = NULL,
+            pitch_margin = NULL,
             reference_offset_ms = NULL,
             matched_duration_ms = NULL,
             attempt_count = 0,

@@ -6,6 +6,12 @@ export interface UploadObjectInput {
   path: string;
   data: Buffer;
   contentType: string;
+  /**
+   * Seconds the object may be reused without revalidating. Supabase stores this
+   * and returns it on every download; without it the browser falls back to a
+   * private heuristic and may refetch the whole file on each page load.
+   */
+  cacheControlSeconds?: number;
 }
 
 export interface CreateSignedUrlInput {
@@ -42,6 +48,9 @@ export class SupabaseObjectStorage {
           Authorization: `Bearer ${serviceRoleKey}`,
           'Content-Type': input.contentType,
           'x-upsert': 'true',
+          ...(input.cacheControlSeconds
+            ? { 'cache-control': `max-age=${input.cacheControlSeconds}` }
+            : {}),
         },
         body,
       });

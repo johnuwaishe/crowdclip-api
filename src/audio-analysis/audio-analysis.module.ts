@@ -17,6 +17,11 @@ import { ShowTimelineController } from './show-timeline.controller';
 import { ShowTimelineRepository } from './show-timeline.repository';
 import { ShowTimelineService } from './show-timeline.service';
 import { ShowClipAssignmentService } from './show-clip-assignment.service';
+import { AudioStemCommandRunner } from './audio-stem-command.runner';
+import { AudioStemProcessor } from './audio-stem.processor';
+import { AudioStemWorker } from './audio-stem.worker';
+import { ClipAudioDerivativesRepository } from './clip-audio-derivatives.repository';
+import { ReferenceNormalizedStemRenderer } from './reference-normalized-stem.renderer';
 
 @Module({
   imports: [MediaStorageModule, WorkspacesModule],
@@ -39,6 +44,11 @@ import { ShowClipAssignmentService } from './show-clip-assignment.service';
     ShowTimelineRepository,
     ShowTimelineService,
     ShowClipAssignmentService,
+    AudioStemCommandRunner,
+    ReferenceNormalizedStemRenderer,
+    ClipAudioDerivativesRepository,
+    AudioStemProcessor,
+    AudioStemWorker,
   ],
   exports: [ClipAudioAnalysesRepository, SameMomentGroupingService],
 })

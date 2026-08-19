@@ -19,4 +19,13 @@ export interface ShowTimelineRow {
   matched_duration_ms: string | null;
   fingerprint_similarity: number | null;
   peak_margin: number | null;
+  time_scale: number | null;
+  pitch_shift_cents: number | null;
+  pitch_similarity: number | null;
+  pitch_margin: number | null;
+  normalized_audio_status: 'pending' | 'processing' | 'ready' | 'failed' | null;
+  normalized_audio_storage_bucket: string | null;
+  normalized_audio_storage_path: string | null;
+  normalized_audio_mime_type: string | null;
+  normalized_audio_duration_ms: string | null;
 }
