@@ -28,7 +28,56 @@ export class DemoMediaAssetsRepository {
           video_id = EXCLUDED.video_id,
           source_start_ms = EXCLUDED.source_start_ms,
           reference_start_ms = EXCLUDED.reference_start_ms,
-          excerpt_duration_ms = EXCLUDED.excerpt_duration_ms
+          excerpt_duration_ms = EXCLUDED.excerpt_duration_ms,
+          status = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN 'pending'
+            ELSE demo_media_assets.status
+          END,
+          storage_bucket = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN NULL
+            ELSE demo_media_assets.storage_bucket
+          END,
+          storage_path = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN NULL
+            ELSE demo_media_assets.storage_path
+          END,
+          mime_type = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN NULL
+            ELSE demo_media_assets.mime_type
+          END,
+          byte_size = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN NULL
+            ELSE demo_media_assets.byte_size
+          END,
+          stored_at = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN NULL
+            ELSE demo_media_assets.stored_at
+          END,
+          last_error = CASE
+            WHEN demo_media_assets.video_id IS DISTINCT FROM EXCLUDED.video_id
+              OR demo_media_assets.source_start_ms IS DISTINCT FROM EXCLUDED.source_start_ms
+              OR demo_media_assets.excerpt_duration_ms IS DISTINCT FROM EXCLUDED.excerpt_duration_ms
+            THEN NULL
+            ELSE demo_media_assets.last_error
+          END
         RETURNING *
       `,
       [
