@@ -14,6 +14,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:local": "zsh ./scripts/start-local.zsh",
+    "tunnel:sync": "node scripts/sync-tunnel.mjs",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

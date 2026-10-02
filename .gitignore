@@ -47,6 +47,7 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+/tmp/
 
 # Local implementation plans
 /docs/plans/

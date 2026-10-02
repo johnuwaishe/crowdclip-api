@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit *)",
+      "Bash(npx jest *)",
+      "Bash(nvm use *)",
+      "Bash(npx prettier --check *)",
+      "Bash(npm run lint *)",
+      "Bash(npm run lint)",
+      "mcp__Claude_Browser__read_page",
+      "mcp__Claude_Browser__read_console_messages",
+      "mcp__Claude_Preview__preview_logs",
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_list",
+      "mcp__64b0bb90-9b99-4abc-b683-062203188047__get_issue",
+      "mcp__64b0bb90-9b99-4abc-b683-062203188047__list_teams"
+    ]
+  }
+}
