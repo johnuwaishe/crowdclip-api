@@ -36,9 +36,20 @@ flowchart LR
 
 ## Architecture
 
-The main API is a NestJS application backed by PostgreSQL and Supabase Storage.
-Database-backed workers process webhook events, copy expiring Instagram media,
-and invoke the Python audio analyser as a child process.
+CrowdClip runs as two NestJS processes from one codebase, both backed by
+PostgreSQL and Supabase Storage:
+
+- **API** (`src/main.ts`) serves HTTP. It records incoming webhooks and returns
+  immediately; it never runs background jobs.
+- **Worker** (`src/worker.ts`) has no HTTP listener. It processes webhook
+  events, copies expiring Instagram media, and invokes the Python audio
+  analyser as a child process.
+
+PostgreSQL is the job queue. Each job is a row claimed with
+`FOR UPDATE SKIP LOCKED`, and new jobs are written in the same transaction as
+the data they belong to, so a crash in either process cannot lose or orphan
+work: unfinished jobs are retried when the worker returns. Several worker
+processes can run at once without claiming the same job.
 
 ```mermaid
 sequenceDiagram
@@ -103,6 +114,17 @@ pnpm start:local
 `start:local` reads the local API URL and service-role key directly from the
 Supabase CLI, exports them to the Nest process, and starts the development
 server. It does not print or persist those credentials.
+
+Background jobs run in a separate process. Start it in a second terminal:
+
+```bash
+pnpm start:local:worker
+```
+
+Without it, the API still accepts webhooks and requests, but story mentions,
+media downloads, and audio analysis stay queued until a worker runs. In
+production, run `pnpm start:prod` and `pnpm start:worker:prod` as separate
+services.
 
 The API defaults to <http://localhost:3000>. With it running, Swagger UI is at
 <http://localhost:3000/docs> and the OpenAPI document is at

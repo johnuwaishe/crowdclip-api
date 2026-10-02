@@ -25,4 +25,5 @@ export SUPABASE_URL="$supabase_api_url"
 export SUPABASE_SERVICE_ROLE_KEY="$supabase_service_role_key"
 export MEDIA_DOWNLOAD_WORKER_ENABLED="${MEDIA_DOWNLOAD_WORKER_ENABLED:-true}"
 
-exec pnpm run start:dev
+# Pass the package script to run: start:dev (API) or start:worker.
+exec pnpm run "${1:-start:dev}"
