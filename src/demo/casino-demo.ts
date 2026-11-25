@@ -471,7 +471,7 @@ export const CASINO_DEMO_DISCOVERY_SOURCES = [
     platform: 'youtube',
     url: 'https://www.youtube.com/watch?v=GysJEiN5OnE',
     attribution: 'CULTCERT — Webster Hall, New York',
-    note: 'Fingerprint-matched performance; 5 of 15 aligned excerpts included in the CA$INO song timeline (the rest were held back so one upload doesn\'t dominate the angle count).',
+    note: "Fingerprint-matched performance; 5 of 15 aligned excerpts included in the CA$INO song timeline (the rest were held back so one upload doesn't dominate the angle count).",
   },
   {
     platform: 'youtube',

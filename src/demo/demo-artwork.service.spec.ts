@@ -78,8 +78,6 @@ describe('DemoArtworkIngestor', () => {
       Buffer.concat([JPEG, Buffer.alloc(MAXIMUM_ARTWORK_BYTES)]),
     );
 
-    await expect(ingestor(path).ingest()).rejects.toThrow(
-      /invalid byte size/,
-    );
+    await expect(ingestor(path).ingest()).rejects.toThrow(/invalid byte size/);
   });
 });
